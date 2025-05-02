@@ -1,4 +1,4 @@
-export function Name() { return "Wallpaper"; }
+export function Name() { return "Wallpaper Engine"; }
 export function Version() { return "1.0.0"; }
 export function Type() { return "network"; }
 export function Publisher() { return "I'm Not MentaL"; }
@@ -123,13 +123,13 @@ function hexToRgb(hex) {
 }
 
 export function DiscoveryService() {
-
+	this.IconUrl = "https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/srgbwallpaper.png";
 	this.Initialize = () => {
 		service.addController(new Wallpaper({
 			id: "Wallpaper",
 			port: 8123,
 			ip: "127.0.0.1",
-			name: "Wallpaper",
+			name: "Wallpaper Engine",
 		}));
 
 		const controller = service.getController("Wallpaper");
@@ -169,5 +169,5 @@ class Wallpaper {
 }
 
 export function ImageUrl() {
-	return "https://i.imgur.com/yknEGHA.png";
+	return "https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/srgbwallpaper.png";
 }
