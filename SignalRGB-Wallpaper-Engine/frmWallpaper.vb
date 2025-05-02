@@ -120,26 +120,29 @@ Public Class frmWallpaper
                     Dim count As Integer = 0
                     For j As Integer = 0 To matrix.GetUpperBound(0)
                         For i As Integer = 0 To matrix.GetUpperBound(0)
-                            Dim rgbColor = srgbClient.Colors(count)
-                            If rgbColor <> OffColor Then
-                                Using sb As New SolidBrush(rgbColor)
-                                    Dim X As Single = rectangleSize.Width * i
-                                    Dim Y As Single = rectangleSize.Height * j
-                                    Dim W As Single = rectangleSize.Width
-                                    Dim H As Single = rectangleSize.Height
-                                    Dim P As Single = LEDPadding
+                            Try
+                                Dim rgbColor = srgbClient.Colors(count)
+                                If rgbColor <> OffColor Then
+                                    Using sb As New SolidBrush(rgbColor)
+                                        Dim X As Single = rectangleSize.Width * i
+                                        Dim Y As Single = rectangleSize.Height * j
+                                        Dim W As Single = rectangleSize.Width
+                                        Dim H As Single = rectangleSize.Height
+                                        Dim P As Single = LEDPadding
 
-                                    Select Case Utils.LEDShape
-                                        Case LEDShape.Rectangle
-                                            graphic.FillRectangle(sb, New RectangleF(X + P, Y + P, W - P, H - P))
-                                        Case LEDShape.RoundedRectangle
-                                            graphic.FillRoundedRectangle(sb, New Rectangle(X + P, Y + P, W - P, H - P), RoundedRectangleCornerRadius)
-                                        Case LEDShape.Sphere
-                                            graphic.FillEllipse(sb, New RectangleF(X + P, Y + P, W - P, H - P))
-                                    End Select
-                                End Using
-                            End If
-
+                                        Select Case Utils.LEDShape
+                                            Case LEDShape.Rectangle
+                                                graphic.FillRectangle(sb, New RectangleF(X + P, Y + P, W - P, H - P))
+                                            Case LEDShape.RoundedRectangle
+                                                graphic.FillRoundedRectangle(sb, New Rectangle(X + P, Y + P, W - P, H - P), RoundedRectangleCornerRadius)
+                                            Case LEDShape.Sphere
+                                                graphic.FillEllipse(sb, New RectangleF(X + P, Y + P, W - P, H - P))
+                                        End Select
+                                    End Using
+                                End If
+                            Catch ex As Exception
+                                'shutup
+                            End Try
                             count += 1
                             If count >= LedCount Then count = 0
                         Next
