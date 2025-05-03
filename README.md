@@ -15,6 +15,7 @@ The first SignalRGB Wallpaper Engine Wallpaper coded with Visual Basic & Javascr
 
 # Install
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/SRGBmods/QMK-Images/main/images/add-to-signalrgb.png)](https://srgbmods.net/s?p=addon/install?url=https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine)
+
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3475033880)
 
 # Prerequisite
