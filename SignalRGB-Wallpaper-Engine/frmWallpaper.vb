@@ -110,11 +110,17 @@ Public Class frmWallpaper
         Try
             If srgbClient IsNot Nothing Then
                 If srgbClient.IsListening Then
-                    Dim Width As Integer = 32
-                    Dim Height As Integer = 18
+                    Dim Width As Integer = srgbClient.MatrixSize.Width
+                    Dim Height As Integer = srgbClient.MatrixSize.Height
                     Dim LedCount As Integer = Width * Height
 
-                    Dim rectangleSize As New SizeF(ClientRectangle.Width / (LedCount / Height), ClientRectangle.Height / Height)
+                    Dim rectangleSize As SizeF
+                    Try
+                        rectangleSize = New SizeF(ClientRectangle.Width / (LedCount / Height), ClientRectangle.Height / Height)
+                    Catch ex As Exception
+                        'shut up!!
+                    End Try
+
 
                     Dim matrix(Width - 1, Height - 1) As String
                     Dim count As Integer = 0

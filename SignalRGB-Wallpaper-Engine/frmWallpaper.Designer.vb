@@ -23,6 +23,7 @@ Partial Class frmWallpaper
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmWallpaper))
         tmConfig = New Timer(components)
         tmCheckSignalRGB = New Timer(components)
         tmUpdate = New Timer(components)
@@ -50,7 +51,7 @@ Partial Class frmWallpaper
         pbDiffuser.Dock = DockStyle.Fill
         pbDiffuser.Location = New Point(0, 0)
         pbDiffuser.Name = "pbDiffuser"
-        pbDiffuser.Size = New Size(192, 108)
+        pbDiffuser.Size = New Size(300, 200)
         pbDiffuser.SizeMode = PictureBoxSizeMode.Zoom
         pbDiffuser.TabIndex = 0
         pbDiffuser.TabStop = False
@@ -60,12 +61,13 @@ Partial Class frmWallpaper
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.Black
-        ClientSize = New Size(192, 108)
+        ClientSize = New Size(300, 200)
         ControlBox = False
         Controls.Add(pbDiffuser)
         DoubleBuffered = True
         ForeColor = Color.White
         FormBorderStyle = FormBorderStyle.None
+        Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "frmWallpaper"
         ShowIcon = False
         ShowInTaskbar = False

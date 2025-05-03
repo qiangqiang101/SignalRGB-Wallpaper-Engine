@@ -50,7 +50,7 @@ Module Utils
         Try
             Dim username As String = SystemInformation.UserName
             Dim mypath As String = Application.ExecutablePath.Replace("\", "/")
-            Dim debugpath As String = "E:/SteamLibrary/steamapps/common/wallpaper_engine/projects/myprojects/signalrgb-wallpa/SignalRGB-Wallpaper-Engine.exe"
+            Dim debugpath As String = "E:/SteamLibrary/steamapps/common/wallpaper_engine/projects/myprojects/signalrgb-wallpa/SignalRGBWallpaperEngine.exe"
 
             Dim json = JObject.Parse(File.ReadAllText(config))
             Dim item = json(username)("wproperties")(If(DebugMode, debugpath, mypath))(display)([property])
@@ -257,4 +257,19 @@ Public Enum LEDShape
     Rectangle
     RoundedRectangle
     Sphere
+End Enum
+
+Public Enum MatrixSizeType
+    Landscape4_3
+    Portrait4_3
+    Landscape5_4
+    Portrait5_4
+    Landscape16_9
+    Portrait16_9
+    Landscape16_10
+    Portrait16_10
+    Landscape21_9
+    Portrait21_9
+    Landscape32_9
+    Portrait32_9
 End Enum

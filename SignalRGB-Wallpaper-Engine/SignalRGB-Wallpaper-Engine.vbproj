@@ -7,7 +7,13 @@
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <AssemblyName>SignalRGBWallpaperEngine</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="app.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <Import Include="System.Data" />

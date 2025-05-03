@@ -20,6 +20,50 @@ Public Class SignalRGBClient
         End Get
     End Property
 
+    Private _matrixSizeType As MatrixSizeType
+    Public ReadOnly Property MatrixSizeType() As MatrixSizeType
+        Get
+            Return _matrixSizeType
+        End Get
+    End Property
+
+    Public ReadOnly Property MatrixSize() As Size
+        Get
+            Select Case _matrixSizeType
+                Case MatrixSizeType.Landscape4_3
+                    Return New Size(36, 27)
+                Case MatrixSizeType.Portrait4_3
+                    Return New Size(27, 36)
+                Case MatrixSizeType.Landscape5_4
+                    Return New Size(40, 32)
+                Case MatrixSizeType.Portrait5_4
+                    Return New Size(32, 40)
+                Case MatrixSizeType.Landscape16_9
+                    Return New Size(48, 27)
+                Case MatrixSizeType.Portrait16_9
+                    Return New Size(27, 48)
+                Case MatrixSizeType.Landscape16_10
+                    Return New Size(48, 30)
+                Case MatrixSizeType.Portrait16_10
+                    Return New Size(30, 48)
+                Case MatrixSizeType.Landscape21_9
+                    Return New Size(52, 22)
+                Case MatrixSizeType.Portrait21_9
+                    Return New Size(22, 52)
+                Case MatrixSizeType.Landscape32_9
+                    Return New Size(64, 18)
+                Case Else 'Portrait32_9
+                    Return New Size(18, 64)
+            End Select
+        End Get
+    End Property
+
+    Public ReadOnly Property LEDCount() As Integer
+        Get
+            Return MatrixSize.Width * MatrixSize.Height
+        End Get
+    End Property
+
     Public Sub New(Optional port As Integer = 8123)
         listenPort = port
     End Sub
@@ -50,6 +94,9 @@ Public Class SignalRGBClient
     End Sub
 
     Private Sub ProcessSignalRGBPacket(data As Byte(), sender As IPEndPoint)
+        'Dim hexString As String = BitConverter.ToString(data).Replace("-", " ")
+        'Logger.Capture($"Raw data: {hexString}")
+
         Try
             If data.Length < 8 Then
                 Return
@@ -57,20 +104,27 @@ Public Class SignalRGBClient
 
             ParseRGBCommands(data)
         Catch ex As Exception
-            Logger.Log($"Error processing packet: {ex.Message}")
+            Logger.Log($"Error processing packet: {ex.Message} {ex.StackTrace}")
         End Try
     End Sub
 
     Private Sub ParseRGBCommands(data As Byte())
         If data.Length >= 8 Then
-            _colors.Clear()
+            Try
+                _colors.Clear()
 
-            For i As Integer = 0 To data.Length - 1 Step 3
-                Dim r As Byte = data(i)
-                Dim g As Byte = data(i + 1)
-                Dim b As Byte = data(i + 2)
-                _colors.Add(Color.FromArgb(r, g, b))
-            Next
+                _matrixSizeType = CInt(data(0))
+                Dim newData = data.Skip(3).ToArray
+
+                For i As Integer = 0 To newData.Length - 1 Step 3
+                    Dim r As Byte = newData(i)
+                    Dim g As Byte = newData(i + 1)
+                    Dim b As Byte = newData(i + 2)
+                    _colors.Add(Color.FromArgb(r, g, b))
+                Next
+            Catch ex As Exception
+                Logger.Log($"Error parsing packet: {ex.Message} {ex.StackTrace}")
+            End Try
         End If
     End Sub
 
