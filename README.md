@@ -18,6 +18,9 @@ The first SignalRGB Wallpaper Engine Wallpaper coded with Visual Basic & Javascr
 
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3475033880)
 
+# Wallpaper Covers
+[https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Wallpapers](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Wallpapers)
+
 # Prerequisite
 [.NET 8.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
