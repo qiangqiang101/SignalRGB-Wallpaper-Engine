@@ -20,3 +20,6 @@ The first SignalRGB Wallpaper Engine Wallpaper coded with Visual Basic & Javascr
 
 # Prerequisite
 [.NET 8.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+
+# Similar Projects
+[OpenRGB Wallpaper](https://github.com/qiangqiang101/OpenRGB-Wallpaper) [OpenRGB Wallpaper Engine](https://github.com/qiangqiang101/OpenRGB-Wallpaper-Engine) 
