@@ -52,7 +52,7 @@ Partial Class frmWallpaper
         pbDiffuser.Location = New Point(0, 0)
         pbDiffuser.Name = "pbDiffuser"
         pbDiffuser.Size = New Size(300, 200)
-        pbDiffuser.SizeMode = PictureBoxSizeMode.Zoom
+        pbDiffuser.SizeMode = PictureBoxSizeMode.AutoSize
         pbDiffuser.TabIndex = 0
         pbDiffuser.TabStop = False
         ' 
@@ -76,6 +76,7 @@ Partial Class frmWallpaper
         WindowState = FormWindowState.Maximized
         CType(pbDiffuser, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
+        PerformLayout()
     End Sub
 
     Friend WithEvents tmConfig As Timer
