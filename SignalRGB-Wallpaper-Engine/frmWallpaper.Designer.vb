@@ -73,6 +73,7 @@ Partial Class frmWallpaper
         ShowInTaskbar = False
         StartPosition = FormStartPosition.Manual
         Text = "SignalRGB Wallpaper"
+        WindowState = FormWindowState.Maximized
         CType(pbDiffuser, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
     End Sub

@@ -24,7 +24,7 @@ Module Utils
     Public SizeMode As PictureBoxSizeMode = PictureBoxSizeMode.Zoom
     Public BackgroundColor As String = ColorTranslator.ToHtml(Color.Black)
 
-    Public DebugMode As Boolean = True
+    Public DebugMode As Boolean = False
 
     Public Sub UpdateWEConfigValues(config As String, display As String)
         Try
