@@ -47,9 +47,9 @@ Public Class SignalRGBClient
                 Case MatrixSizeType.Portrait16_9
                     Return New Size(27, 48)
                 Case MatrixSizeType.Landscape16_10
-                    Return New Size(48, 30)
+                    Return New Size(40, 25)
                 Case MatrixSizeType.Portrait16_10
-                    Return New Size(30, 48)
+                    Return New Size(25, 40)
                 Case MatrixSizeType.Landscape21_9
                     Return New Size(52, 22)
                 Case MatrixSizeType.Portrait21_9
