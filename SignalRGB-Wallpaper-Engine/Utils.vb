@@ -4,43 +4,43 @@ Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Runtime.InteropServices
 Imports Newtonsoft.Json.Linq
+Imports WindowsDisplayAPI
 Imports WindowsDisplayAPI.DisplayConfig
 
 Module Utils
 
+    Public SaveFile As String = "usersave.json"
+    Public MySave As UserSave = New UserSave()
     Public SmoothingMode As SmoothingMode = SmoothingMode.Default
     Public CompositingQuality As CompositingQuality = CompositingQuality.Default
     Public InterpolationMode As InterpolationMode = InterpolationMode.Default
     Public PixelOffsetMode As PixelOffsetMode = PixelOffsetMode.Default
-    Public LEDShape As LEDShape = LEDShape.Rectangle
-    Public LEDPadding As Single = 0
     Public TimerIntervals As Integer = 30
-    Public RoundedRectangleCornerRadius As Integer = 10
     Public CpuUsagePauseValue As Integer = 60
-
-    Public Port As Integer = 8123
-
     Public BackgroundImage As String = Nothing
     Public SizeMode As PictureBoxSizeMode = PictureBoxSizeMode.Zoom
     Public BackgroundColor As String = ColorTranslator.ToHtml(Color.Black)
 
     Public DebugMode As Boolean = False
 
+    Public Sub UpdateSRGBConfigValues(s As SignalRGBSettingsChangedEventArgs)
+        Try
+            SmoothingMode = s.SmoothingMode
+            CompositingQuality = s.CompositingQuality
+            InterpolationMode = s.InterpolationMode
+            PixelOffsetMode = s.PixelOffsetMode
+            TimerIntervals = s.LEDUpdateInterval
+            SizeMode = s.CoverImageSizeMode
+            BackgroundColor = ColorTranslator.ToHtml(s.BackgroundColor)
+            CpuUsagePauseValue = s.CPUUsagePauseValue
+        Catch ex As Exception
+            Logger.Log($"{ex.Message} {ex.StackTrace}")
+        End Try
+    End Sub
+
     Public Sub UpdateWEConfigValues(config As String, display As String)
         Try
-            SmoothingMode = CType(TryGetValue("smoothingMode", SmoothingMode.Default, config, display), SmoothingMode)
-            CompositingQuality = CType(TryGetValue("compositingQuality", CompositingQuality.Default, config, display), CompositingQuality)
-            InterpolationMode = CType(TryGetValue("interpolationMode", InterpolationMode.Default, config, display), InterpolationMode)
-            PixelOffsetMode = CType(TryGetValue("pixelOffsetMode", PixelOffsetMode.Default, config, display), PixelOffsetMode)
-            LEDShape = CType(TryGetValue("ledShape", LEDShape.Rectangle, config, display), LEDShape)
-            RoundedRectangleCornerRadius = CInt(TryGetValue("roundedRectangleRadius", 0, config, display))
-            LEDPadding = CSng(TryGetValue("ledPadding", 0F, config, display))
-            TimerIntervals = CInt(TryGetValue("ledUpdateInterval", 30, config, display))
-            Port = CInt(TryGetValue("sdkPort", 8123, config, display))
             BackgroundImage = CStr(TryGetValue("coverImage", Nothing, config, display))
-            SizeMode = CType(TryGetValue("sizeMode", PictureBoxSizeMode.CenterImage, config, display), PictureBoxSizeMode)
-            BackgroundColor = ColorTranslator.ToHtml(CStr(TryGetValue("backgroundColor", "0 0 0", config, display)).ToColor)
-            CpuUsagePauseValue = CInt(TryGetValue("cpuUsagePauseValue", 60, config, display))
         Catch ex As Exception
             Logger.Log($"{ex.Message} {ex.StackTrace}")
         End Try

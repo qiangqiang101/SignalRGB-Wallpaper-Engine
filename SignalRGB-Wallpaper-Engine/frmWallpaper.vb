@@ -5,20 +5,21 @@ Imports System.Threading
 
 Public Class frmWallpaper
 
-    'Dim OffColor As Color = Color.FromArgb(255, 0, 0, 0)
     Dim configFile As String = WallpaperEngineConfig()
     Dim monitordetection As String = "devicepath"
     Dim display As String = ScreenDevicePath
     Dim configLastDate As Date = Now
 
     Public cpuUsage As New PerformanceCounter("Processor", "% Processor Time", "_Total")
-    Public srgbClient As SignalRGBClient = Nothing
+    Public WithEvents srgbClient As SignalRGBClient = Nothing
     Public srgbThread As Thread = Nothing
 
     Dim connectString As String = Nothing
     Dim drawErrorStringOnScreen As Boolean = True
 
     Private Sub frmWallpaper_Load(sender As Object, e As EventArgs) Handles Me.Load
+        If File.Exists(SaveFile) Then MySave = New UserSave().Load(SaveFile)
+
         If configFile <> "error" Then
             monitordetection = TryGetUserSettings("monitordetection", "devicepath", configFile)
             Select Case monitordetection
@@ -46,7 +47,7 @@ Public Class frmWallpaper
         If IsSignalRGBRunning() Then
             Try
                 If srgbClient Is Nothing Then
-                    srgbClient = New SignalRGBClient(Port)
+                    srgbClient = New SignalRGBClient(MySave, 8123)
                     tmCheckSignalRGB.Stop()
                     srgbThread = New Thread(AddressOf srgbClient.StartListening)
                     With srgbThread
@@ -121,7 +122,6 @@ Public Class frmWallpaper
                         'shut up!!
                     End Try
 
-
                     Dim matrix(Width - 1, Height - 1) As String
                     Dim count As Integer = 0
                     For j As Integer = 0 To matrix.GetUpperBound(0)
@@ -133,13 +133,13 @@ Public Class frmWallpaper
                                     Dim Y As Single = rectangleSize.Height * j
                                     Dim W As Single = rectangleSize.Width
                                     Dim H As Single = rectangleSize.Height
-                                    Dim P As Single = LEDPadding
+                                    Dim P As Single = srgbClient.LEDPadding
 
-                                    Select Case Utils.LEDShape
+                                    Select Case srgbClient.LEDShape
                                         Case LEDShape.Rectangle
                                             graphic.FillRectangle(sb, New RectangleF(X + P, Y + P, W - P, H - P))
                                         Case LEDShape.RoundedRectangle
-                                            graphic.FillRoundedRectangle(sb, New Rectangle(X + P, Y + P, W - P, H - P), RoundedRectangleCornerRadius)
+                                            graphic.FillRoundedRectangle(sb, New Rectangle(X + P, Y + P, W - P, H - P), srgbClient.RoundedRectangleCornerRadius)
                                         Case LEDShape.Sphere
                                             graphic.FillEllipse(sb, New RectangleF(X + P, Y + P, W - P, H - P))
                                     End Select
@@ -193,5 +193,24 @@ Public Class frmWallpaper
         Catch ex As Exception
             Logger.Log($"{ex.Message} {ex.StackTrace}")
         End Try
+    End Sub
+
+    Private Sub srgbClient_SettingsChanged(sender As Object, e As SignalRGBSettingsChangedEventArgs) Handles srgbClient.SettingsChanged
+        UpdateSRGBConfigValues(e)
+        With MySave
+            .MatrixSizeType = e.MatrixSizeType
+            .SmoothingMode = e.SmoothingMode
+            .CompositingQuality = e.CompositingQuality
+            .InterpolationMode = e.InterpolationMode
+            .PixelOffsetMode = e.PixelOffsetMode
+            .LedShape = e.LEDShape
+            .RoundedRectangleCornerRadius = e.RoundedRectangleCornerRadius
+            .LedPadding = e.LEDPadding
+            .LedUpdateInterval = e.LEDUpdateInterval
+            .CoverImageSizeMode = e.CoverImageSizeMode
+            .BackgroundColor = e.BackgroundColor
+            .CpuUsagePauseValue = e.CPUUsagePauseValue
+        End With
+        MySave.Save(SaveFile)
     End Sub
 End Class

@@ -81,6 +81,11 @@ Item {
                                 color: theme.secondarytextcolor
                                 text: "IP Address: " + (device.ip != "" ? device.ip : "Unknown")
                             }
+
+                            Text{
+                                color: theme.secondarytextcolor
+                                text: "Port: " + device.port
+                            }
                         }
                     }
                 }
