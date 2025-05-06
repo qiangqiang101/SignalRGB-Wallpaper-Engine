@@ -20,8 +20,7 @@ Module Utils
     Public BackgroundImage As String = Nothing
     Public SizeMode As PictureBoxSizeMode = PictureBoxSizeMode.Zoom
     Public BackgroundColor As String = ColorTranslator.ToHtml(Color.Black)
-
-    Public DebugMode As Boolean = False
+    Public SignalRGBPort As Integer = 8123
 
     Public Sub UpdateSRGBConfigValues(s As SignalRGBSettingsChangedEventArgs)
         Try
@@ -53,7 +52,7 @@ Module Utils
             Dim debugpath As String = "E:/SteamLibrary/steamapps/common/wallpaper_engine/projects/myprojects/signalrgb-wallpa/SignalRGBWallpaperEngine.exe"
 
             Dim json = JObject.Parse(File.ReadAllText(config))
-            Dim item = json(username)("wproperties")(If(DebugMode, debugpath, mypath))(display)([property])
+            Dim item = json(username)("wproperties")(If(Debugger.IsAttached, debugpath, mypath))(display)([property])
 
             If item IsNot Nothing Then
                 Return CType(item, Object)

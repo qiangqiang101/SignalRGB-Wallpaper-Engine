@@ -2,6 +2,7 @@
 Imports System.IO
 Imports System.Runtime.InteropServices
 Imports System.Threading
+Imports Windows.Win32
 
 Public Class frmWallpaper
 
@@ -47,7 +48,7 @@ Public Class frmWallpaper
         If IsSignalRGBRunning() Then
             Try
                 If srgbClient Is Nothing Then
-                    srgbClient = New SignalRGBClient(MySave, 8123)
+                    srgbClient = New SignalRGBClient(MySave, SignalRGBPort)
                     tmCheckSignalRGB.Stop()
                     srgbThread = New Thread(AddressOf srgbClient.StartListening)
                     With srgbThread
@@ -92,7 +93,6 @@ Public Class frmWallpaper
                 srgbClient.StopListening()
                 srgbThread = Nothing
             End If
-
         End If
     End Sub
 
@@ -114,39 +114,22 @@ Public Class frmWallpaper
                     Dim Width As Integer = srgbClient.MatrixSize.Width
                     Dim Height As Integer = srgbClient.MatrixSize.Height
                     Dim LedCount As Integer = Width * Height
-
-                    Dim rectangleSize As SizeF
-                    Try
-                        rectangleSize = New SizeF(ClientRectangle.Width / (LedCount / Height), ClientRectangle.Height / Height)
-                    Catch ex As Exception
-                        'shut up!!
-                    End Try
+                    Dim lastWorkingColor As Color = Color.Black
+                    Dim rectangleSize As New SizeF(ClientRectangle.Width / (LedCount / Height), ClientRectangle.Height / Height)
 
                     Dim matrix(Width - 1, Height - 1) As String
                     Dim count As Integer = 0
+
                     For j As Integer = 0 To matrix.GetUpperBound(0)
                         For i As Integer = 0 To matrix.GetUpperBound(0)
                             Try
                                 Dim rgbColor = srgbClient.Colors(count)
-                                Using sb As New SolidBrush(rgbColor)
-                                    Dim X As Single = rectangleSize.Width * i
-                                    Dim Y As Single = rectangleSize.Height * j
-                                    Dim W As Single = rectangleSize.Width
-                                    Dim H As Single = rectangleSize.Height
-                                    Dim P As Single = srgbClient.LEDPadding
-
-                                    Select Case srgbClient.LEDShape
-                                        Case LEDShape.Rectangle
-                                            graphic.FillRectangle(sb, New RectangleF(X + P, Y + P, W - P, H - P))
-                                        Case LEDShape.RoundedRectangle
-                                            graphic.FillRoundedRectangle(sb, New Rectangle(X + P, Y + P, W - P, H - P), srgbClient.RoundedRectangleCornerRadius)
-                                        Case LEDShape.Sphere
-                                            graphic.FillEllipse(sb, New RectangleF(X + P, Y + P, W - P, H - P))
-                                    End Select
-                                End Using
+                                ApplyColor(graphic, srgbClient, i, j, rgbColor, rectangleSize)
+                                lastWorkingColor = rgbColor
                             Catch ex As Exception
-                                'shutup
+                                ApplyColor(graphic, srgbClient, i, j, lastWorkingColor, rectangleSize)
                             End Try
+
                             count += 1
                             If count >= LedCount Then count = 0
                         Next
@@ -160,6 +143,25 @@ Public Class frmWallpaper
         End Try
 
         MyBase.OnPaint(e)
+    End Sub
+
+    Private Sub ApplyColor(graphic As Graphics, srgbClient As SignalRGBClient, i As Integer, j As Integer, color As Color, rectangleSize As SizeF)
+        Using sb As New SolidBrush(color)
+            Dim X As Single = rectangleSize.Width * i
+            Dim Y As Single = rectangleSize.Height * j
+            Dim W As Single = rectangleSize.Width
+            Dim H As Single = rectangleSize.Height
+            Dim P As Single = srgbClient.LEDPadding
+
+            Select Case srgbClient.LEDShape
+                Case LEDShape.Rectangle
+                    graphic.FillRectangle(sb, New RectangleF(X + P, Y + P, W - P, H - P))
+                Case LEDShape.RoundedRectangle
+                    graphic.FillRoundedRectangle(sb, New Rectangle(X + P, Y + P, W - P, H - P), srgbClient.RoundedRectangleCornerRadius)
+                Case LEDShape.Sphere
+                    graphic.FillEllipse(sb, New RectangleF(X + P, Y + P, W - P, H - P))
+            End Select
+        End Using
     End Sub
 
     Private Sub tmCheckSignalRGB_Tick(sender As Object, e As EventArgs) Handles tmCheckSignalRGB.Tick
@@ -213,4 +215,5 @@ Public Class frmWallpaper
         End With
         MySave.Save(SaveFile)
     End Sub
+
 End Class
