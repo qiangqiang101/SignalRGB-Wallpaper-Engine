@@ -51,7 +51,7 @@ Partial Class frmWallpaper
         pbDiffuser.Dock = DockStyle.Fill
         pbDiffuser.Location = New Point(0, 0)
         pbDiffuser.Name = "pbDiffuser"
-        pbDiffuser.Size = New Size(300, 200)
+        pbDiffuser.Size = New Size(512, 288)
         pbDiffuser.SizeMode = PictureBoxSizeMode.AutoSize
         pbDiffuser.TabIndex = 0
         pbDiffuser.TabStop = False
@@ -61,7 +61,7 @@ Partial Class frmWallpaper
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.Black
-        ClientSize = New Size(300, 200)
+        ClientSize = New Size(512, 288)
         ControlBox = False
         Controls.Add(pbDiffuser)
         DoubleBuffered = True
