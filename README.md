@@ -23,13 +23,18 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3475033880)
 
 # Troubleshooting
-[https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Troubleshooting](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Troubleshooting)
+- [Troubleshooting Wiki](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Troubleshooting)
+- [Ask the community](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/discussions/categories/tech-support)
 
 # Wallpaper Covers
-[https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Wallpapers](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Wallpapers)
+- [Official Wallpaper Covers](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Wallpapers)
+- [Community Wallpaper Covers](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/discussions/categories/community-wallpapers)
 
 # Prerequisite
-[.NET 8.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [.NET 8.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [Wallpaper Engine](https://store.steampowered.com/app/431960/Wallpaper_Engine/)
+- [SignalRGB](https://signalrgb.com/)
 
 # Similar Projects
-[OpenRGB Wallpaper](https://github.com/qiangqiang101/OpenRGB-Wallpaper) [OpenRGB Wallpaper Engine](https://github.com/qiangqiang101/OpenRGB-Wallpaper-Engine) 
+- [OpenRGB Wallpaper](https://github.com/qiangqiang101/OpenRGB-Wallpaper)
+- [OpenRGB Wallpaper Engine](https://github.com/qiangqiang101/OpenRGB-Wallpaper-Engine) 
