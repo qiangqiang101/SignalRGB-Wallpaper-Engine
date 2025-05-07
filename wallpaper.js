@@ -796,7 +796,6 @@ const _vLedNames = {
 		"Led941","Led942","Led943","Led944","Led945","Led946","Led947","Led948","Led949","Led950","Led951","Led952","Led953","Led954","Led955","Led956","Led957","Led958","Led959","Led960",
 		"Led961","Led962","Led963","Led964","Led965","Led966","Led967","Led968","Led969","Led970","Led971","Led972","Led973","Led974","Led975","Led976","Led977","Led978","Led979","Led980",
 		"Led981","Led982","Led983","Led984","Led985","Led986","Led987","Led988","Led989","Led990","Led991","Led992","Led993","Led994","Led995","Led996","Led997","Led998","Led999","Led1000",
-		"Led981","Led982","Led983","Led984","Led985","Led986","Led987","Led988","Led989","Led990","Led991","Led992","Led993","Led994","Led995","Led996","Led997","Led998","Led999","Led1000",
 		"Led1001","Led1002","Led1003","Led1004","Led1005","Led1006","Led1007","Led1008","Led1009","Led1010","Led1011","Led1012","Led1013","Led1014","Led1015","Led1016","Led1017","Led1018","Led1019","Led1020",
 		"Led1021","Led1022","Led1023","Led1024","Led1025","Led1026","Led1027","Led1028","Led1029","Led1030","Led1031","Led1032","Led1033","Led1034","Led1035","Led1036","Led1037","Led1038","Led1039","Led1040",
 		"Led1041","Led1042","Led1043","Led1044","Led1045","Led1046","Led1047","Led1048","Led1049","Led1050","Led1051","Led1052","Led1053","Led1054","Led1055","Led1056","Led1057","Led1058","Led1059","Led1060",
