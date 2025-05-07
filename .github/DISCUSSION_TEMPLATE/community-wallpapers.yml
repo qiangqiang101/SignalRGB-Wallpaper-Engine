@@ -1,6 +1,11 @@
 title: "Share "
 labels: ["Wallpaper"]
 body:
+  - type: input.image
+    id: preview
+    attributes:
+      label: Wallpaper Preview
+      description: Upload a screenshot of your Wallpaper in action.
   - type: input
     id: resolution
     attributes:
