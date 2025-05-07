@@ -28,7 +28,9 @@ Partial Class frmWallpaper
         tmCheckSignalRGB = New Timer(components)
         tmUpdate = New Timer(components)
         pbDiffuser = New PictureBox()
+        panelRGB = New PanelEx()
         CType(pbDiffuser, ComponentModel.ISupportInitialize).BeginInit()
+        panelRGB.SuspendLayout()
         SuspendLayout()
         ' 
         ' tmConfig
@@ -56,6 +58,16 @@ Partial Class frmWallpaper
         pbDiffuser.TabIndex = 0
         pbDiffuser.TabStop = False
         ' 
+        ' panelRGB
+        ' 
+        panelRGB.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        panelRGB.Controls.Add(pbDiffuser)
+        panelRGB.Location = New Point(0, 0)
+        panelRGB.Margin = New Padding(0)
+        panelRGB.Name = "panelRGB"
+        panelRGB.Size = New Size(512, 288)
+        panelRGB.TabIndex = 1
+        ' 
         ' frmWallpaper
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -63,7 +75,7 @@ Partial Class frmWallpaper
         BackColor = Color.Black
         ClientSize = New Size(512, 288)
         ControlBox = False
-        Controls.Add(pbDiffuser)
+        Controls.Add(panelRGB)
         DoubleBuffered = True
         ForeColor = Color.White
         FormBorderStyle = FormBorderStyle.None
@@ -74,13 +86,15 @@ Partial Class frmWallpaper
         StartPosition = FormStartPosition.Manual
         Text = "SignalRGB Wallpaper"
         CType(pbDiffuser, ComponentModel.ISupportInitialize).EndInit()
+        panelRGB.ResumeLayout(False)
+        panelRGB.PerformLayout()
         ResumeLayout(False)
-        PerformLayout()
     End Sub
 
     Friend WithEvents tmConfig As Timer
     Friend WithEvents tmCheckSignalRGB As Timer
     Friend WithEvents tmUpdate As Timer
     Friend WithEvents pbDiffuser As PictureBox
+    Friend WithEvents panelRGB As PanelEx
 
 End Class

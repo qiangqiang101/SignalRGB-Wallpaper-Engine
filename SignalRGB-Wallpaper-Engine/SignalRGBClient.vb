@@ -139,6 +139,20 @@ Public Class SignalRGBClient
         End Get
     End Property
 
+    Private _panelLocation As Point
+    Public ReadOnly Property PanelLocation() As Point
+        Get
+            Return _panelLocation
+        End Get
+    End Property
+
+    Private _panelSize As Size
+    Public ReadOnly Property PanelSize() As Size
+        Get
+            Return _panelSize
+        End Get
+    End Property
+
     Public Sub New(save As UserSave, Optional port As Integer = 8123)
         listenPort = port
         _matrixSizeType = save.MatrixSizeType
@@ -153,6 +167,8 @@ Public Class SignalRGBClient
         _coverImageSizeMode = save.CoverImageSizeMode
         _cpuUsagePauseValue = save.CpuUsagePauseValue
         _backgroundColor = save.BackgroundColor
+        _panelLocation = save.PanelLocation
+        _panelSize = save.PanelSize
     End Sub
 
     Public Sub StartListening()
@@ -230,10 +246,13 @@ Public Class SignalRGBClient
                 _ledUpdateInterval = CInt(data(9))
                 _coverImageSizeMode = CInt(data(10))
                 _cpuUsagePauseValue = CInt(data(11))
-                _backgroundColor = Color.FromArgb(data(12), data(13), data(14))
+                _panelLocation = New Point(data(12), data(13))
+                _panelSize = New Size(data(14), data(15))
+                _backgroundColor = Color.FromArgb(data(16), data(17), data(18))
 
                 Dim eventArgs = New SignalRGBSettingsChangedEventArgs(_matrixSizeType, _smoothingMode, _compositingQuality, _interpolationMode, _pixelOffsetMode, _ledShape,
-                                                                      _roundedRectangleCornerRadius, _ledPadding, _ledUpdateInterval, _coverImageSizeMode, _backgroundColor, _cpuUsagePauseValue)
+                                                                      _roundedRectangleCornerRadius, _ledPadding, _ledUpdateInterval, _coverImageSizeMode, _backgroundColor,
+                                                                      _cpuUsagePauseValue, _panelLocation, _panelSize)
                 RaiseEvent SettingsChanged(Me, eventArgs)
             Catch ex As Exception
                 Logger.Log($"Error parsing packet: {ex.Message} {ex.StackTrace}")
@@ -386,9 +405,23 @@ Public Class SignalRGBSettingsChangedEventArgs
         End Get
     End Property
 
+    Private _panelLocation As Point
+    Public ReadOnly Property PanelLocation() As Point
+        Get
+            Return _panelLocation
+        End Get
+    End Property
+
+    Private _panelSize As Size
+    Public ReadOnly Property PanelSize() As Size
+        Get
+            Return _panelSize
+        End Get
+    End Property
+
     Public Sub New(matrixSizeType As MatrixSizeType, smoothingMode As SmoothingMode, compositingQuality As CompositingQuality, interpolationMode As InterpolationMode, pixelOffsetMode As PixelOffsetMode,
                    ledShape As LEDShape, roundedRectangleCornerRadius As Integer, ledPadding As Single, ledUpdateInterval As Integer, coverImageSizeMode As Integer, backgroundColor As Color,
-                   cpuUsagePauseValue As Integer)
+                   cpuUsagePauseValue As Integer, panelLocation As Point, panelSize As Size)
         _matrixSizeType = matrixSizeType
         _smoothingMode = smoothingMode
         _compositingQuality = compositingQuality
@@ -401,6 +434,8 @@ Public Class SignalRGBSettingsChangedEventArgs
         _coverImageSizeMode = coverImageSizeMode
         _backgroundColor = backgroundColor
         _cpuUsagePauseValue = cpuUsagePauseValue
+        _panelLocation = panelLocation
+        _panelSize = panelSize
     End Sub
 
 End Class

@@ -20,7 +20,12 @@ Module Utils
     Public BackgroundImage As String = Nothing
     Public SizeMode As PictureBoxSizeMode = PictureBoxSizeMode.Zoom
     Public BackgroundColor As String = ColorTranslator.ToHtml(Color.Black)
-    Public SignalRGBPort As Integer = 8123
+    Public PanelX As Integer = 50
+    Public PanelY As Integer = 50
+    Public PanelWidth As Integer = 100
+    Public PanelHeight As Integer = 100
+
+    Public SignalRGBPort As Integer = 8124
 
     Public Sub UpdateSRGBConfigValues(s As SignalRGBSettingsChangedEventArgs)
         Try
@@ -32,6 +37,10 @@ Module Utils
             SizeMode = s.CoverImageSizeMode
             BackgroundColor = ColorTranslator.ToHtml(s.BackgroundColor)
             CpuUsagePauseValue = s.CPUUsagePauseValue
+            PanelX = s.PanelLocation.X
+            PanelY = s.PanelLocation.Y
+            PanelWidth = s.PanelSize.Width
+            PanelHeight = s.PanelSize.Height
         Catch ex As Exception
             Logger.Log($"{ex.Message} {ex.StackTrace}")
         End Try
@@ -271,4 +280,9 @@ Public Enum MatrixSizeType
     Portrait21_9
     Landscape32_9
     Portrait32_9
+End Enum
+
+Public Enum PositionType
+    X
+    Y
 End Enum

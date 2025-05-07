@@ -27,12 +27,17 @@ export function ControllableParameters() {
 		{"property":"CoverImageSizeMode", "group":"settings", "label":"Cover Image Size Mode", description: "Specifies how an image is positioned", "type":"combobox", "values":["Normal", "Stretch Image", "Auto Size", "Center Image", "Zoom"], "default":"Zoom"},
 		{"property":"BackgroundColor", "group":"settings", "label":"Background Color", description: "This color is applied to the background", "min":"0", "max":"360", "type":"color", "default":"#000000"},
 		{"property":"CpuUsagePauseValue", "label":"CPU Usage Pause Value", description: "Temporary Pause Wallpaper effects to reduce CPU usage for potato PC", "step":"1", "type":"number","min":"50", "max":"100","default":"60"},
+
+		{"property":"PanelPositionX", "label":"Position X", description: "Repositioning Wallpaper left and right", "step":"1", "type":"number","min":"0", "max":"100","default":"50"},
+		{"property":"PanelPositionY", "label":"Position Y", description: "Repositioning Wallpaper up and down", "step":"1", "type":"number","min":"0", "max":"100","default":"50"},
+		{"property":"PanelWidth", "label":"Width", description: "Resizing Wallpaper width", "step":"1", "type":"number","min":"0", "max":"100","default":"100"},
+		{"property":"PanelHeight", "label":"Height", description: "Resizing Wallpaper height", "step":"1", "type":"number","min":"0", "max":"100","default":"100"},
 	];
 }
 
 //Fixed settings
-const MaxLedsInPacket = 480; //483;
-const UdpPort = 8123;
+const MaxLedsInPacket = 480;
+const UdpPort = 8124;
 const ColorPacket = 0x00;
 const SettingPacket = 0x01;
 
@@ -1102,6 +1107,22 @@ export function onBackgroundColorChanged() {
 	updateSettings();
 }
 
+export function onPanelPositionXChanged() {
+	updateSettings();
+}
+
+export function onPanelPositionYChanged() {
+	updateSettings();
+}
+
+export function onPanelWidthChanged() {
+	updateSettings();
+}
+
+export function onPanelHeightChanged() {
+	updateSettings();
+}
+
 export function LedNames() {
 	return vLedNames[MatrixSize];
 }
@@ -1134,7 +1155,7 @@ function updateSettings() {
 	RGBData[14] = color[2];
 
 	let packet = [SettingPacket, vMatrixSize[MatrixSize], vSmoothingMode[SmoothingMode], vCompositingQuality[CompositingQuality], vInterpolationMode[InterpolationMode], vPixelOffsetMode[PixelOffsetMode], 
-	vLedShape[LedShape], RoundedRectangleCornerRadius, LedPadding, LedUpdateInterval, vCoverImageSizeMode[CoverImageSizeMode], CpuUsagePauseValue]; //0x01 = Send Settings
+	vLedShape[LedShape], RoundedRectangleCornerRadius, LedPadding, LedUpdateInterval, vCoverImageSizeMode[CoverImageSizeMode], CpuUsagePauseValue, PanelPositionX, PanelPositionY, PanelWidth, PanelHeight];
 	packet.push(...RGBData);
 	udp.send(controller.ip, controller.port, packet);
 }

@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel
+Imports System.Drawing.Printing
 Imports System.IO
 Imports System.Runtime.InteropServices
 Imports System.Threading
@@ -39,6 +40,16 @@ Public Class frmWallpaper
             BackColor = ColorTranslator.FromHtml(BackgroundColor)
             pbDiffuser.Image = If(Utils.BackgroundImage = Nothing, Nothing, Image.FromFile(Utils.BackgroundImage))
             pbDiffuser.SizeMode = Utils.SizeMode
+
+            If panelRGB.InvokeRequired Then
+                panelRGB.Invoke(Sub()
+                                    panelRGB.Location = New Point(PercentageToPoint(PanelX, PositionType.X), PercentageToPoint(PanelY, PositionType.Y))
+                                    panelRGB.Size = New Size(PercentageToSize(PanelWidth, ClientRectangle.Width), PercentageToSize(PanelHeight, ClientRectangle.Height))
+                                End Sub)
+            Else
+                panelRGB.Location = New Point(PercentageToPoint(PanelX, PositionType.X), PercentageToPoint(PanelY, PositionType.Y))
+                panelRGB.Size = New Size(PercentageToSize(PanelWidth, ClientRectangle.Width), PercentageToSize(PanelHeight, ClientRectangle.Height))
+            End If
 
             Connect()
         End If
@@ -82,7 +93,7 @@ Public Class frmWallpaper
 
     Private Sub tmUpdate_Tick(sender As Object, e As EventArgs) Handles tmUpdate.Tick
         If Not HighCpuUsage() Then
-            Invalidate()
+            panelRGB.Invalidate()
             If connectString <> Nothing Then pbDiffuser.Invalidate()
         End If
     End Sub
@@ -103,7 +114,7 @@ Public Class frmWallpaper
         graphic.PixelOffsetMode = PixelOffsetMode
     End Sub
 
-    Protected Overrides Sub OnPaint(e As PaintEventArgs)
+    Private Sub panelRGB_Paint(sender As Object, e As PaintEventArgs) Handles panelRGB.Paint
         Dim graphic As Graphics = e.Graphics
         PrepareGraphics(graphic)
         graphic.Clear(BackColor)
@@ -115,7 +126,7 @@ Public Class frmWallpaper
                     Dim Height As Integer = srgbClient.MatrixSize.Height
                     Dim LedCount As Integer = Width * Height
                     Dim lastWorkingColor As Color = Color.Black
-                    Dim rectangleSize As New SizeF(ClientRectangle.Width / (LedCount / Height), ClientRectangle.Height / Height)
+                    Dim rectangleSize As New SizeF(panelRGB.ClientRectangle.Width / (LedCount / Height), panelRGB.ClientRectangle.Height / Height)
 
                     Dim matrix(Width - 1, Height - 1) As String
                     Dim count As Integer = 0
@@ -138,11 +149,11 @@ Public Class frmWallpaper
                     tmCheckSignalRGB.Start()
                 End If
             End If
+
+            graphic.DrawString("1", New Font(Font.FontFamily, 100), Brushes.White, New PointF(panelRGB.Width - 200, 1))
         Catch ex As Exception
             Logger.Log($"{ex.Message} {ex.StackTrace}")
         End Try
-
-        MyBase.OnPaint(e)
     End Sub
 
     Private Sub ApplyColor(graphic As Graphics, srgbClient As SignalRGBClient, i As Integer, j As Integer, color As Color, rectangleSize As SizeF)
@@ -181,6 +192,16 @@ Public Class frmWallpaper
                 BackColor = ColorTranslator.FromHtml(BackgroundColor)
                 pbDiffuser.Image = If(Utils.BackgroundImage = Nothing, Nothing, Image.FromFile(Utils.BackgroundImage))
                 pbDiffuser.SizeMode = Utils.SizeMode
+
+                If panelRGB.InvokeRequired Then
+                    panelRGB.Invoke(Sub()
+                                        panelRGB.Location = New Point(PercentageToPoint(PanelX, PositionType.X), PercentageToPoint(PanelY, PositionType.Y))
+                                        panelRGB.Size = New Size(PercentageToSize(PanelWidth, ClientRectangle.Width), PercentageToSize(PanelHeight, ClientRectangle.Height))
+                                    End Sub)
+                Else
+                    panelRGB.Location = New Point(PercentageToPoint(PanelX, PositionType.X), PercentageToPoint(PanelY, PositionType.Y))
+                    panelRGB.Size = New Size(PercentageToSize(PanelWidth, ClientRectangle.Width), PercentageToSize(PanelHeight, ClientRectangle.Height))
+                End If
             End If
         Catch ex As Exception
             Logger.Log($"{ex.Message} {ex.StackTrace}")
@@ -199,6 +220,19 @@ Public Class frmWallpaper
 
     Private Sub srgbClient_SettingsChanged(sender As Object, e As SignalRGBSettingsChangedEventArgs) Handles srgbClient.SettingsChanged
         UpdateSRGBConfigValues(e)
+
+        If panelRGB.InvokeRequired Then
+            panelRGB.Invoke(Sub()
+                                UpdatePanelPositionX(e.PanelLocation.X)
+                                UpdatePanelPositionY(e.PanelLocation.Y)
+                                ResizePanel(e.PanelSize)
+                            End Sub)
+        Else
+            UpdatePanelPositionX(e.PanelLocation.X)
+            UpdatePanelPositionY(e.PanelLocation.Y)
+            ResizePanel(e.PanelSize)
+        End If
+
         With MySave
             .MatrixSizeType = e.MatrixSizeType
             .SmoothingMode = e.SmoothingMode
@@ -212,8 +246,63 @@ Public Class frmWallpaper
             .CoverImageSizeMode = e.CoverImageSizeMode
             .BackgroundColor = e.BackgroundColor
             .CpuUsagePauseValue = e.CPUUsagePauseValue
+            .PanelLocation = e.PanelLocation
+            .PanelSize = e.PanelSize
         End With
         MySave.Save(SaveFile)
+    End Sub
+
+    Private Sub UpdatePanelPositionX(percentage As Integer)
+        Dim availableWidth As Integer = ClientRectangle.Width - panelRGB.Width
+        Dim newX As Integer = CInt(availableWidth * (percentage / 100))
+        panelRGB.Location = New Point(newX, panelRGB.Location.Y)
+    End Sub
+
+    Private Sub UpdatePanelPositionY(percentage As Integer)
+        Dim availableHeight As Integer = ClientRectangle.Height - panelRGB.Height
+        Dim newY As Integer = CInt(availableHeight * (percentage / 100))
+        panelRGB.Location = New Point(panelRGB.Location.X, newY)
+    End Sub
+
+    Private Sub ResizePanel(sizePercent As Size)
+        panelRGB.Size = New Size(PercentageToSize(sizePercent.Width, ClientRectangle.Width), PercentageToSize(sizePercent.Height, ClientRectangle.Height))
+    End Sub
+
+    Private Sub ResizePanel(widthPercent As Integer, heightPercent As Integer)
+        panelRGB.Size = New Size(PercentageToSize(widthPercent, ClientRectangle.Width), PercentageToSize(heightPercent, ClientRectangle.Height))
+    End Sub
+
+    Private Function PercentageToPoint(percentage As Integer, pos As PositionType) As Integer
+        Dim availableSize As Integer
+        Select Case pos
+            Case PositionType.X
+                availableSize = ClientRectangle.Width - panelRGB.Width
+            Case PositionType.Y
+                availableSize = ClientRectangle.Height - panelRGB.Height
+        End Select
+        Dim newVal As Integer = CInt(availableSize * (percentage / 100))
+        Return newVal
+    End Function
+
+    Private Function PercentageToSize(percentage As Integer, maxSize As Integer) As Integer
+        Dim minSize As Integer = 0
+        Dim newSize As Integer = CInt(maxSize * (percentage / 100))
+        If newSize < minSize Then newSize = minSize
+        Return newSize
+    End Function
+
+    Private Sub frmWallpaper_Resize(sender As Object, e As EventArgs) Handles Me.Resize
+        If panelRGB.InvokeRequired Then
+            panelRGB.Invoke(Sub()
+                                UpdatePanelPositionX(PanelX)
+                                UpdatePanelPositionY(PanelY)
+                                ResizePanel(PanelWidth, PanelHeight)
+                            End Sub)
+        Else
+            UpdatePanelPositionX(PanelX)
+            UpdatePanelPositionY(PanelY)
+            ResizePanel(PanelWidth, PanelHeight)
+        End If
     End Sub
 
 End Class
