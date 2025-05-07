@@ -1,55 +1,50 @@
-title: "[Wallpaper] "
-labels: ["Community Wallpaper"]
+title: ""
+labels: ["Wallpaper"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        This is text that will show up in the template!
-  - type: textarea
-    id: improvements
-    attributes:
-      label: Top 3 improvements
-      description: "What are the top 3 improvements we could make to this project?"
-      value: |
-        1.
-        2.
-        3.
-        ...
-      render: bash
-    validations:
-      required: true
-  - type: markdown
-    attributes:
-      value: |
-        ## Markdown header
-        And some more markdown
   - type: input
-    id: has-id
+    id: resolution
     attributes:
-      label: Suggestions
-      description: A description about suggestions to help you
+      label: Wallpaper Resolution
+      description: Dimension of the Wallpaper (IE: 1920x1080)
     validations:
       required: true
   - type: dropdown
-    id: download
+    id: genre
     attributes:
-      label: Which area of this project could be most improved?
+      label: Wallpaper Genre
       options:
-        - Documentation
-        - Pull request review time
-        - Bug fix time
-        - Release cadence
+        - Abstract
+        - Animal
+        - Anime
+        - Cartoon
+        - CGI
+        - Cyberpunk
+        - Fantasy
+        - Game
+        - Girls
+        - Guys
+        - Landscape
+        - Medieval
+        - Memes
+        - Music
+        - Nature
+        - Pixel art
+        - Relaxing
+        - Retro
+        - Sci-Fi
+        - Sports
+        - Technology
+        - Television
+        - Vehicle
+        - Unspecified genre
     validations:
       required: true
-  - type: checkboxes
+  - type: textarea
+    id: description
     attributes:
-      label: Check that box!
-      options:
-        - label: This one!
-          required: true
-        - label: I won't stop you if you check this one, too
-  - type: markdown
-    attributes:
+      label: Description
       value: |
-        ### The thrilling conclusion
-        _to our template_
+        ...
+      render: bash
+    validations:
+      required: false
