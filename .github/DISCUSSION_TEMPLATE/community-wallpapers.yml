@@ -6,6 +6,7 @@ body:
     attributes:
       label: Wallpaper Resolution
       description: Dimension of the Wallpaper
+      placeholder: 1920x1080
     validations:
       required: true
   - type: dropdown
