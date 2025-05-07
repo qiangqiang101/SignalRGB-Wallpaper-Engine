@@ -5,7 +5,7 @@ body:
     id: resolution
     attributes:
       label: Wallpaper Resolution
-      description: "Dimension of the Wallpaper (IE: 1920x1080)"
+      description: | Dimension of the Wallpaper (IE: 1920x1080)
     validations:
       required: true
   - type: dropdown
