@@ -139,17 +139,17 @@ Public Class SignalRGBClient
         End Get
     End Property
 
-    Private _panelLocation As Point
-    Public ReadOnly Property PanelLocation() As Point
+    Private _locationPercentage As Point
+    Public ReadOnly Property LocationPercentage() As Point
         Get
-            Return _panelLocation
+            Return _locationPercentage
         End Get
     End Property
 
-    Private _panelSize As Size
-    Public ReadOnly Property PanelSize() As Size
+    Private _sizePercentage As Size
+    Public ReadOnly Property SizePercentage() As Size
         Get
-            Return _panelSize
+            Return _sizePercentage
         End Get
     End Property
 
@@ -167,8 +167,8 @@ Public Class SignalRGBClient
         _coverImageSizeMode = save.CoverImageSizeMode
         _cpuUsagePauseValue = save.CpuUsagePauseValue
         _backgroundColor = save.BackgroundColor
-        _panelLocation = save.PanelLocation
-        _panelSize = save.PanelSize
+        _locationPercentage = save.LocationPercentage
+        _sizePercentage = save.SizePercentage
     End Sub
 
     Public Sub StartListening()
@@ -246,13 +246,13 @@ Public Class SignalRGBClient
                 _ledUpdateInterval = CInt(data(9))
                 _coverImageSizeMode = CInt(data(10))
                 _cpuUsagePauseValue = CInt(data(11))
-                _panelLocation = New Point(data(12), data(13))
-                _panelSize = New Size(data(14), data(15))
+                _locationPercentage = New Point(data(12), data(13))
+                _sizePercentage = New Size(data(14), data(15))
                 _backgroundColor = Color.FromArgb(data(16), data(17), data(18))
 
                 Dim eventArgs = New SignalRGBSettingsChangedEventArgs(_matrixSizeType, _smoothingMode, _compositingQuality, _interpolationMode, _pixelOffsetMode, _ledShape,
                                                                       _roundedRectangleCornerRadius, _ledPadding, _ledUpdateInterval, _coverImageSizeMode, _backgroundColor,
-                                                                      _cpuUsagePauseValue, _panelLocation, _panelSize)
+                                                                      _cpuUsagePauseValue, _locationPercentage, _sizePercentage)
                 RaiseEvent SettingsChanged(Me, eventArgs)
             Catch ex As Exception
                 Logger.Log($"Error parsing packet: {ex.Message} {ex.StackTrace}")
@@ -405,23 +405,23 @@ Public Class SignalRGBSettingsChangedEventArgs
         End Get
     End Property
 
-    Private _panelLocation As Point
-    Public ReadOnly Property PanelLocation() As Point
+    Private _locationPercentage As Point
+    Public ReadOnly Property LocationPercentage() As Point
         Get
-            Return _panelLocation
+            Return _locationPercentage
         End Get
     End Property
 
-    Private _panelSize As Size
-    Public ReadOnly Property PanelSize() As Size
+    Private _sizePercentage As Size
+    Public ReadOnly Property SizePercentage() As Size
         Get
-            Return _panelSize
+            Return _sizePercentage
         End Get
     End Property
 
     Public Sub New(matrixSizeType As MatrixSizeType, smoothingMode As SmoothingMode, compositingQuality As CompositingQuality, interpolationMode As InterpolationMode, pixelOffsetMode As PixelOffsetMode,
                    ledShape As LEDShape, roundedRectangleCornerRadius As Integer, ledPadding As Single, ledUpdateInterval As Integer, coverImageSizeMode As Integer, backgroundColor As Color,
-                   cpuUsagePauseValue As Integer, panelLocation As Point, panelSize As Size)
+                   cpuUsagePauseValue As Integer, locationPercentage As Point, sizePercentage As Size)
         _matrixSizeType = matrixSizeType
         _smoothingMode = smoothingMode
         _compositingQuality = compositingQuality
@@ -434,8 +434,8 @@ Public Class SignalRGBSettingsChangedEventArgs
         _coverImageSizeMode = coverImageSizeMode
         _backgroundColor = backgroundColor
         _cpuUsagePauseValue = cpuUsagePauseValue
-        _panelLocation = panelLocation
-        _panelSize = panelSize
+        _locationPercentage = locationPercentage
+        _sizePercentage = sizePercentage
     End Sub
 
 End Class

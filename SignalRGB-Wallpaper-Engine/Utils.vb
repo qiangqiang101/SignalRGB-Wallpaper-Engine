@@ -37,10 +37,10 @@ Module Utils
             SizeMode = s.CoverImageSizeMode
             BackgroundColor = ColorTranslator.ToHtml(s.BackgroundColor)
             CpuUsagePauseValue = s.CPUUsagePauseValue
-            PanelX = s.PanelLocation.X
-            PanelY = s.PanelLocation.Y
-            PanelWidth = s.PanelSize.Width
-            PanelHeight = s.PanelSize.Height
+            PanelX = s.LocationPercentage.X
+            PanelY = s.LocationPercentage.Y
+            PanelWidth = s.SizePercentage.Width
+            PanelHeight = s.SizePercentage.Height
         Catch ex As Exception
             Logger.Log($"{ex.Message} {ex.StackTrace}")
         End Try

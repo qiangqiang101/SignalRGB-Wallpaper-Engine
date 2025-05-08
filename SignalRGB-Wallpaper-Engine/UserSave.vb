@@ -17,8 +17,11 @@ Public Class UserSave
     Public CoverImageSizeMode As Integer
     Public BackgroundColor As Color
     Public CpuUsagePauseValue As Integer
-    Public PanelLocation As Point
-    Public PanelSize As Size
+    Public LocationPercentage As Point
+    Public SizePercentage As Size
+
+    Public Location As Point
+    Public Size As Size
 
     Public Function Load(filename As String) As UserSave
         Return JsonConvert.DeserializeObject(Of UserSave)(IO.File.ReadAllText(filename))
