@@ -23,7 +23,7 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3475033880)
 
-## 🚀 Troubleshooting
+## 🔧 Troubleshooting
 - [Troubleshooting Wiki](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Troubleshooting)
 - [Ask the community](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/discussions/categories/tech-support)
 
@@ -36,6 +36,6 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 - [Wallpaper Engine](https://store.steampowered.com/app/431960/Wallpaper_Engine/)
 - [SignalRGB](https://signalrgb.com/)
 
-## 🤘🏻 Similar Projects
+## 🚀 Similar Projects
 - [OpenRGB Wallpaper](https://github.com/qiangqiang101/OpenRGB-Wallpaper)
 - [OpenRGB Wallpaper Engine](https://github.com/qiangqiang101/OpenRGB-Wallpaper-Engine) 
