@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="WindowsDisplayAPI" Version="1.3.0.13" />
   </ItemGroup>
 
   <ItemGroup>

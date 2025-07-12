@@ -17,6 +17,7 @@ Public Class UserSave
     Public CoverImageSizeMode As Integer
     Public BackgroundColor As Color
     Public CpuUsagePauseValue As Integer
+    Public CoverImage As String
 
     Public Function Load(filename As String) As UserSave
         Return JsonConvert.DeserializeObject(Of UserSave)(IO.File.ReadAllText(filename))

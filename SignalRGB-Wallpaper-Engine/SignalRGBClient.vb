@@ -139,6 +139,13 @@ Public Class SignalRGBClient
         End Get
     End Property
 
+    Private _coverImage As String
+    Public ReadOnly Property CoverImage() As String
+        Get
+            Return _coverImage
+        End Get
+    End Property
+
     Public Sub New(save As UserSave, Optional port As Integer = 8123)
         listenPort = port
         _matrixSizeType = save.MatrixSizeType
@@ -153,6 +160,7 @@ Public Class SignalRGBClient
         _coverImageSizeMode = save.CoverImageSizeMode
         _cpuUsagePauseValue = save.CpuUsagePauseValue
         _backgroundColor = save.BackgroundColor
+        _coverImage = save.CoverImage
     End Sub
 
     Public Sub StartListening()
@@ -231,9 +239,11 @@ Public Class SignalRGBClient
                 _coverImageSizeMode = CInt(data(10))
                 _cpuUsagePauseValue = CInt(data(11))
                 _backgroundColor = Color.FromArgb(data(12), data(13), data(14))
+                _coverImage = Text.Encoding.UTF8.GetString(data.Skip(16).ToArray()).TrimEnd(Chr(0)) 'Skip 1 byte for length
 
                 Dim eventArgs = New SignalRGBSettingsChangedEventArgs(_matrixSizeType, _smoothingMode, _compositingQuality, _interpolationMode, _pixelOffsetMode, _ledShape,
-                                                                      _roundedRectangleCornerRadius, _ledPadding, _ledUpdateInterval, _coverImageSizeMode, _backgroundColor, _cpuUsagePauseValue)
+                                                                      _roundedRectangleCornerRadius, _ledPadding, _ledUpdateInterval, _coverImageSizeMode, _backgroundColor,
+                                                                      _cpuUsagePauseValue, _coverImage)
                 RaiseEvent SettingsChanged(Me, eventArgs)
             Catch ex As Exception
                 Logger.Log($"Error parsing packet: {ex.Message} {ex.StackTrace}")
@@ -386,9 +396,16 @@ Public Class SignalRGBSettingsChangedEventArgs
         End Get
     End Property
 
+    Private _coverImage As String
+    Public ReadOnly Property CoverImage() As String
+        Get
+            Return _coverImage
+        End Get
+    End Property
+
     Public Sub New(matrixSizeType As MatrixSizeType, smoothingMode As SmoothingMode, compositingQuality As CompositingQuality, interpolationMode As InterpolationMode, pixelOffsetMode As PixelOffsetMode,
                    ledShape As LEDShape, roundedRectangleCornerRadius As Integer, ledPadding As Single, ledUpdateInterval As Integer, coverImageSizeMode As Integer, backgroundColor As Color,
-                   cpuUsagePauseValue As Integer)
+                   cpuUsagePauseValue As Integer, coverImage As String)
         _matrixSizeType = matrixSizeType
         _smoothingMode = smoothingMode
         _compositingQuality = compositingQuality
@@ -401,6 +418,7 @@ Public Class SignalRGBSettingsChangedEventArgs
         _coverImageSizeMode = coverImageSizeMode
         _backgroundColor = backgroundColor
         _cpuUsagePauseValue = cpuUsagePauseValue
+        _coverImage = coverImage
     End Sub
 
 End Class

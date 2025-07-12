@@ -27,6 +27,7 @@ export function ControllableParameters() {
 		{"property":"CoverImageSizeMode", "group":"settings", "label":"Cover Image Size Mode", description: "Specifies how an image is positioned", "type":"combobox", "values":["Normal", "Stretch Image", "Auto Size", "Center Image", "Zoom"], "default":"Zoom"},
 		{"property":"BackgroundColor", "group":"settings", "label":"Background Color", description: "This color is applied to the background", "min":"0", "max":"360", "type":"color", "default":"#000000"},
 		{"property":"CpuUsagePauseValue", "label":"CPU Usage Pause Value", description: "Temporary Pause Wallpaper effects to reduce CPU usage for potato PC", "step":"1", "type":"number","min":"50", "max":"100","default":"60"},
+		{"property":"CoverImage", "label": "Cover Image", "type": "textfield", description: "A diffuser image to cover the virtual LEDs, supports local and web files (Example: 'C:\\Users\\BARRY\\Pictures\\razer2.png' or 'https://github.com/qiangqiang101/OpenRGB-Wallpaper/raw/master/Wallpaper-Wallpaper/razer5.png?raw=true')", "default": "https://github.com/qiangqiang101/OpenRGB-Wallpaper/raw/master/Wallpaper-Wallpaper/razer5.png?raw=true"},
 	];
 }
 
@@ -1098,6 +1099,10 @@ export function onCoverImageSizeModeChanged() {
 	updateSettings();
 }
 
+export function onCoverImageChanged() {
+	updateSettings();
+}
+
 export function onBackgroundColorChanged() {
 	updateSettings();
 }
@@ -1126,16 +1131,15 @@ export function Shutdown(suspend) {
 }
 
 function updateSettings() {
-	const RGBData = [];
-
 	let color = hexToRgb(BackgroundColor);
-	RGBData[12] = color[0];
-	RGBData[13] = color[1];
-	RGBData[14] = color[2];
-
 	let packet = [SettingPacket, vMatrixSize[MatrixSize], vSmoothingMode[SmoothingMode], vCompositingQuality[CompositingQuality], vInterpolationMode[InterpolationMode], vPixelOffsetMode[PixelOffsetMode], 
-	vLedShape[LedShape], RoundedRectangleCornerRadius, LedPadding, LedUpdateInterval, vCoverImageSizeMode[CoverImageSizeMode], CpuUsagePauseValue]; //0x01 = Send Settings
-	packet.push(...RGBData);
+	vLedShape[LedShape], RoundedRectangleCornerRadius, LedPadding, LedUpdateInterval, vCoverImageSizeMode[CoverImageSizeMode], CpuUsagePauseValue, color[0], color[1], color[2]]; //0x01 = Send Settings
+
+	// Convert string to bytes and add to packet
+	const coverImageBytes = stringToBytes(CoverImage);
+	packet.push(coverImageBytes.length); // Length prefix
+	packet.push(...coverImageBytes);
+
 	udp.send(controller.ip, controller.port, packet);
 }
 
@@ -1169,6 +1173,24 @@ function grabColors(shutdown = false) {
 		packet = packet.concat(RGBData.splice(0, MaxLedsInPacket*3));
 		udp.send(controller.ip, controller.port, packet);
 	}
+}
+
+function stringToBytes(str) {
+	const bytes = [];
+	for (let i = 0; i < str.length; i++) {
+		const code = str.charCodeAt(i);
+		if (code < 0x80) {
+			bytes.push(code);
+		} else if (code < 0x800) {
+			bytes.push(0xc0 | (code >> 6));
+			bytes.push(0x80 | (code & 0x3f));
+		} else if (code < 0xd800 || code >= 0xe000) {
+			bytes.push(0xe0 | (code >> 12));
+			bytes.push(0x80 | ((code >> 6) & 0x3f));
+			bytes.push(0x80 | (code & 0x3f));
+		}
+	}
+	return bytes;
 }
 
 function hexToRgb(hex) {

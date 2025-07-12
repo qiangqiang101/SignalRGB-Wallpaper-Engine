@@ -1,11 +1,8 @@
 ﻿Imports System.Drawing.Drawing2D
 Imports System.Drawing.Imaging
 Imports System.IO
+Imports System.Net.Http
 Imports System.Runtime.CompilerServices
-Imports System.Runtime.InteropServices
-Imports Newtonsoft.Json.Linq
-Imports WindowsDisplayAPI
-Imports WindowsDisplayAPI.DisplayConfig
 
 Module Utils
 
@@ -32,53 +29,47 @@ Module Utils
             SizeMode = s.CoverImageSizeMode
             BackgroundColor = ColorTranslator.ToHtml(s.BackgroundColor)
             CpuUsagePauseValue = s.CPUUsagePauseValue
+            BackgroundImage = s.CoverImage
         Catch ex As Exception
             Logger.Log($"{ex.Message} {ex.StackTrace}")
         End Try
     End Sub
 
-    Public Sub UpdateWEConfigValues(config As String, display As String)
+    Public Sub ReadSaveValues(s As UserSave)
         Try
-            BackgroundImage = CStr(TryGetValue("coverImage", Nothing, config, display))
+            SmoothingMode = s.SmoothingMode
+            CompositingQuality = s.CompositingQuality
+            InterpolationMode = s.InterpolationMode
+            PixelOffsetMode = s.PixelOffsetMode
+            TimerIntervals = s.LedUpdateInterval
+            SizeMode = s.CoverImageSizeMode
+            BackgroundColor = ColorTranslator.ToHtml(s.BackgroundColor)
+            CpuUsagePauseValue = s.CpuUsagePauseValue
+            BackgroundImage = s.CoverImage
         Catch ex As Exception
             Logger.Log($"{ex.Message} {ex.StackTrace}")
         End Try
     End Sub
 
-    Public Function TryGetValue([property] As String, [default] As Object, Optional config As String = Nothing, Optional display As String = Nothing) As Object
-        Try
-            Dim username As String = SystemInformation.UserName
-            Dim mypath As String = Application.ExecutablePath.Replace("\", "/")
-            Dim debugpath As String = "E:/SteamLibrary/steamapps/common/wallpaper_engine/projects/myprojects/signalrgb-wallpa/SignalRGBWallpaperEngine.exe"
-
-            Dim json = JObject.Parse(File.ReadAllText(config))
-            Dim item = json(username)("wproperties")(If(Debugger.IsAttached, debugpath, mypath))(display)([property])
-
-            If item IsNot Nothing Then
-                Return CType(item, Object)
+    <Extension>
+    Public Function TryParseCoverImage(src As String) As Image
+        If src.StartsWith("http") Then
+            Try
+                Using client As New HttpClient()
+                    Dim bytes As Byte() = client.GetByteArrayAsync(src).Result
+                    Dim ms As New MemoryStream(bytes)
+                    Return Image.FromStream(ms)
+                End Using
+            Catch ex As Exception
+                Return New Bitmap(0, 0)
+            End Try
+        Else
+            If File.Exists(src) Then
+                Return Image.FromFile(src)
             Else
-                Return [default]
+                Return New Bitmap(0, 0)
             End If
-        Catch ex As Exception
-            Logger.Log($"{ex.Message} {ex.StackTrace}")
-            Return [default]
-        End Try
-    End Function
-
-    Public Function TryGetUserSettings([property] As String, [default] As Object, Optional config As String = Nothing) As Object
-        Try
-            Dim username As String = SystemInformation.UserName
-            Dim json = JObject.Parse(File.ReadAllText(config))
-            Dim item = json(username)("general")("user")([property])
-
-            If item IsNot Nothing Then
-                Return CType(item, Object)
-            Else
-                Return [default]
-            End If
-        Catch ex As Exception
-            Return [default]
-        End Try
+        End If
     End Function
 
     <Extension>
@@ -206,43 +197,6 @@ Module Utils
         Catch ex As Exception
             Return Color.Black
         End Try
-    End Function
-
-    Public Function WallpaperEngineConfig() As String
-        Dim wallpaper32 As Process = Process.GetProcessesByName("wallpaper32").FirstOrDefault
-        Dim wallpaper64 As Process = Process.GetProcessesByName("wallpaper64").FirstOrDefault
-
-        Try
-            If wallpaper32 Is Nothing Then
-                Return $"{Path.GetDirectoryName(wallpaper64.MainModule.FileName)}\config.json"
-            Else
-                Return $"{Path.GetDirectoryName(wallpaper32.MainModule.FileName)}\config.json"
-            End If
-        Catch ex As Exception
-            Logger.Log($"{ex.Message} {ex.StackTrace}")
-            Return "error"
-        End Try
-    End Function
-
-    <Extension>
-    Public Function ScreenDevicePath(form As Form) As String
-        Dim currScreen As Screen = Screen.FromControl(form)
-        Dim currDisplay = PathDisplayTarget.GetDisplayTargets.Where(Function(x) x.ToDisplayDevice.DisplayName = currScreen.DeviceName).FirstOrDefault
-        Return currDisplay.DevicePath.Replace("\", "/")
-    End Function
-
-    <Extension>
-    Public Function ScreenManaged(form As Form) As String
-        Dim currScreen As Screen = Screen.FromControl(form)
-        Dim identity As String = $"Monitor{CInt(currScreen.DeviceName.Replace("\\.\DISPLAY", Nothing)) - 1}"
-        Return identity
-    End Function
-
-    <Extension>
-    Public Function ScreenLayout(form As Form) As String
-        Dim currScreen As Screen = Screen.FromControl(form)
-        Dim identity As String = $"MonitorPositionL{currScreen.DeviceName.Replace("\\.\DISPLAY", Nothing)}T0"
-        Return identity
     End Function
 
     Public Function IsSignalRGBRunning() As Boolean

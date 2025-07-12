@@ -1,15 +1,9 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
-Imports System.Runtime.InteropServices
 Imports System.Threading
 Imports Windows.Win32
 
 Public Class frmWallpaper
-
-    Dim configFile As String = WallpaperEngineConfig()
-    Dim monitordetection As String = "devicepath"
-    Dim display As String = ScreenDevicePath
-    Dim configLastDate As Date = Now
 
     Public cpuUsage As New PerformanceCounter("Processor", "% Processor Time", "_Total")
     Public WithEvents srgbClient As SignalRGBClient = Nothing
@@ -19,29 +13,17 @@ Public Class frmWallpaper
     Dim drawErrorStringOnScreen As Boolean = True
 
     Private Sub frmWallpaper_Load(sender As Object, e As EventArgs) Handles Me.Load
-        If File.Exists(SaveFile) Then MySave = New UserSave().Load(SaveFile)
-
-        If configFile <> "error" Then
-            monitordetection = TryGetUserSettings("monitordetection", "devicepath", configFile)
-            Select Case monitordetection
-                Case "devicepath"
-                    display = ScreenDevicePath
-                Case "managed"
-                    display = ScreenManaged
-                Case "layout"
-                    display = ScreenLayout
-            End Select
-
-            UpdateWEConfigValues(configFile, display)
-
-            configLastDate = File.GetLastWriteTime(configFile)
-            tmUpdate.Interval = TimerIntervals
-            BackColor = ColorTranslator.FromHtml(BackgroundColor)
-            pbDiffuser.Image = If(Utils.BackgroundImage = Nothing, Nothing, Image.FromFile(Utils.BackgroundImage))
-            pbDiffuser.SizeMode = Utils.SizeMode
-
-            Connect()
+        If File.Exists(SaveFile) Then
+            MySave = New UserSave().Load(SaveFile)
+            ReadSaveValues(MySave)
         End If
+
+        tmUpdate.Interval = TimerIntervals
+        BackColor = ColorTranslator.FromHtml(BackgroundColor)
+        pbDiffuser.Image = If(Utils.BackgroundImage = Nothing, Nothing, Utils.BackgroundImage.TryParseCoverImage())
+        pbDiffuser.SizeMode = Utils.SizeMode
+
+        Connect()
     End Sub
 
     Public Sub Connect()
@@ -171,17 +153,10 @@ Public Class frmWallpaper
 
     Private Sub tmConfig_Tick(sender As Object, e As EventArgs) Handles tmConfig.Tick
         Try
-            Dim configDate As Date = File.GetLastWriteTime(configFile)
-            If configLastDate <> configDate Then
-                configLastDate = configDate
-                UpdateWEConfigValues(configFile, display)
-
-                configLastDate = File.GetLastWriteTime(configFile)
-                tmUpdate.Interval = TimerIntervals
-                BackColor = ColorTranslator.FromHtml(BackgroundColor)
-                pbDiffuser.Image = If(Utils.BackgroundImage = Nothing, Nothing, Image.FromFile(Utils.BackgroundImage))
-                pbDiffuser.SizeMode = Utils.SizeMode
-            End If
+            tmUpdate.Interval = TimerIntervals
+            BackColor = ColorTranslator.FromHtml(BackgroundColor)
+            pbDiffuser.Image = If(Utils.BackgroundImage = Nothing, Nothing, Utils.BackgroundImage.TryParseCoverImage())
+            pbDiffuser.SizeMode = Utils.SizeMode
         Catch ex As Exception
             Logger.Log($"{ex.Message} {ex.StackTrace}")
         End Try
@@ -212,6 +187,7 @@ Public Class frmWallpaper
             .CoverImageSizeMode = e.CoverImageSizeMode
             .BackgroundColor = e.BackgroundColor
             .CpuUsagePauseValue = e.CPUUsagePauseValue
+            .CoverImage = e.CoverImage
         End With
         MySave.Save(SaveFile)
     End Sub
