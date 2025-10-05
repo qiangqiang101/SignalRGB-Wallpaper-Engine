@@ -1371,22 +1371,22 @@ export function DiscoveryService() {
 			ip: "127.0.0.1",
 			name: "Wallpaper Engine",
 		}));
-		// service.addController(new Wallpaper({
-		// 	id: "Wallpaper2",
-		// 	port: 8124,
-		// 	ip: "127.0.0.1",
-		// 	name: "Wallpaper Engine (2nd Screen)",
-		// }));
+		service.addController(new Wallpaper({
+			id: "Wallpaper2",
+			port: 8124,
+			ip: "127.0.0.1",
+			name: "Wallpaper Engine (2nd Screen)",
+		}));
 
-		const controller = service.getController("Wallpaper");
-		service.updateController(controller);
-		service.announceController(controller);
+		// const controller = service.getController("Wallpaper");
+		// service.updateController(controller);
+		// service.announceController(controller);
 
-		// const controllers = [service.getController("Wallpaper"), service.getController("Wallpaper2")];
-		// controllers.forEach(function (controller, index) {
-		// 	service.updateController(controller);
-		// 	service.announceController(controller);
-		// });
+		const controllers = [service.getController("Wallpaper"), service.getController("Wallpaper2")];
+		controllers.forEach(function (controller, index) {
+			service.updateController(controller);
+			service.announceController(controller);
+		});
 
 		updateSettings();
 	};
