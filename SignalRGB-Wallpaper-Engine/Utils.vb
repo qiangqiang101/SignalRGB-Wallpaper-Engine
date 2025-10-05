@@ -1,4 +1,5 @@
-﻿Imports System.Drawing.Drawing2D
+﻿Imports System.Configuration
+Imports System.Drawing.Drawing2D
 Imports System.Drawing.Imaging
 Imports System.IO
 Imports System.Net.Http
@@ -17,7 +18,7 @@ Module Utils
     Public BackgroundImage As String = Nothing
     Public SizeMode As PictureBoxSizeMode = PictureBoxSizeMode.Zoom
     Public BackgroundColor As String = ColorTranslator.ToHtml(Color.Black)
-    Public SignalRGBPort As Integer = 8123
+    Public SignalRGBPort As Integer = My.Settings.UdpPort '8123/8124/8125
 
     Public Sub UpdateSRGBConfigValues(s As SignalRGBSettingsChangedEventArgs)
         Try
@@ -225,4 +226,6 @@ Public Enum MatrixSizeType
     Portrait21_9
     Landscape32_9
     Portrait32_9
+    Landscape4_1
+    Portrait4_1
 End Enum

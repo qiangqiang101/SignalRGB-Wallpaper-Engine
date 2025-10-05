@@ -34,6 +34,10 @@ Public Class SignalRGBClient
     Public ReadOnly Property MatrixSize() As Size
         Get
             Select Case _matrixSizeType
+                Case MatrixSizeType.Landscape4_1
+                    Return New Size(64, 16)
+                Case MatrixSizeType.Portrait4_1
+                    Return New Size(16, 64)
                 Case MatrixSizeType.Landscape4_3
                     Return New Size(32, 24)
                 Case MatrixSizeType.Portrait4_3
@@ -291,6 +295,10 @@ Public Class SignalRGBSettingsChangedEventArgs
     Public ReadOnly Property MatrixSize() As Size
         Get
             Select Case _matrixSizeType
+                Case MatrixSizeType.Landscape4_1
+                    Return New Size(64, 16)
+                Case MatrixSizeType.Portrait4_1
+                    Return New Size(16, 64)
                 Case MatrixSizeType.Landscape4_3
                     Return New Size(36, 27)
                 Case MatrixSizeType.Portrait4_3

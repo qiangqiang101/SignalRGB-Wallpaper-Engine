@@ -31,6 +31,7 @@ Item {
         y: 70
         width: parent.width
         height: parent.height - 200
+        spacing: 10
         
          Repeater{
             model: service.controllers          
