@@ -31,6 +31,19 @@ Public Class SignalRGBClient
         End Get
     End Property
 
+    Public ReadOnly Property IsProtrait() As Boolean
+        Get
+            Select Case _matrixSizeType
+                Case MatrixSizeType.Portrait4_1, MatrixSizeType.Portrait4_3, MatrixSizeType.Portrait5_4,
+                     MatrixSizeType.Portrait16_9, MatrixSizeType.Portrait16_10, MatrixSizeType.Portrait21_9,
+                     MatrixSizeType.Portrait32_9
+                    Return True
+                Case Else
+                    Return False
+            End Select
+        End Get
+    End Property
+
     Public ReadOnly Property MatrixSize() As Size
         Get
             Select Case _matrixSizeType

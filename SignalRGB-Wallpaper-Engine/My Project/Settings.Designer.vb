@@ -56,7 +56,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("8123")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("8124")>  _
         Public Property UdpPort() As Integer
             Get
                 Return CType(Me("UdpPort"),Integer)

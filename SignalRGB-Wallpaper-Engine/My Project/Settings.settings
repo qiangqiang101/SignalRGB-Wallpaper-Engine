@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="UdpPort" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">8123</Value>
+      <Value Profile="(Default)">8124</Value>
     </Setting>
   </Settings>
 </SettingsFile>

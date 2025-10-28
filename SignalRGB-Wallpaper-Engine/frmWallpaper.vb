@@ -97,12 +97,12 @@ Public Class frmWallpaper
                     Dim Height As Integer = srgbClient.MatrixSize.Height
                     Dim LedCount As Integer = Width * Height
                     Dim lastWorkingColor As Color = Color.Black
-                    Dim rectangleSize As New SizeF(ClientRectangle.Width / (LedCount / Height), ClientRectangle.Height / Height)
+                    Dim rectangleSize As New SizeF(If(srgbClient.IsProtrait, ClientRectangle.Width / Width, ClientRectangle.Width / (LedCount / Height)), If(srgbClient.IsProtrait, ClientRectangle.Height / (LedCount / Width), ClientRectangle.Height / Height))
 
                     Dim matrix(Width - 1, Height - 1) As String
                     Dim count As Integer = 0
 
-                    For j As Integer = 0 To matrix.GetUpperBound(0)
+                    For j As Integer = 0 To matrix.GetUpperBound(1)
                         For i As Integer = 0 To matrix.GetUpperBound(0)
                             Try
                                 Dim rgbColor = srgbClient.Colors(count)
