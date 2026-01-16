@@ -15,15 +15,16 @@ The first SignalRGB Wallpaper Engine Wallpaper coded with Visual Basic & Javascr
 
 https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 
-
-
 ## 🛠️ Install
 [![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgithub.png?raw=true)](https://srgbmods.net/s?p=addon/install?url=https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine)
 [![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgitlab.png?raw=true)](https://srgbmods.net/s?p=addon/install?url=https://gitlab.com/nollie/SignalRGB-Wallpaper-Engine)
 
+### Wallpaper Engine
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3475033880) (Main Screen)
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3581131369) (Second Screen)
 
+### Lively Wallpaper
+[Download](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/releases/tag/1.3B)
 
 ## 🔧 Troubleshooting
 - [Troubleshooting Wiki](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Troubleshooting)
