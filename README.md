@@ -35,7 +35,7 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 - [Community Wallpaper Covers](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/discussions/categories/community-wallpapers)
 
 ## 🚧 Prerequisite
-- [.NET 8.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [.NET 10.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 - [Wallpaper Engine](https://store.steampowered.com/app/431960/Wallpaper_Engine/)
 - [SignalRGB](https://signalrgb.com/)
 
