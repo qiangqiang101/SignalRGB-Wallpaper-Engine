@@ -1,0 +1,44 @@
+﻿<Window x:Class="MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SignalRGB_Wallpaper_Engine_2"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Background="Black" WindowStyle="None" Foreground="White">
+
+    <Grid x:Name="Container">
+        <local:LedCanvas x:Name="ledCanvas"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         RenderOptions.BitmapScalingMode="LowQuality">
+            <local:LedCanvas.Effect>
+                <BlurEffect Radius="20" KernelType="Gaussian" RenderingBias="Performance"/>
+            </local:LedCanvas.Effect>
+        </local:LedCanvas>
+
+        <Image x:Name="DiffuserImage"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Stretch="Uniform" />
+
+        <TextBlock x:Name="txtConnectStatus"
+                   Margin="20,1,0,0"
+                   Foreground="White"
+                   FontSize="12"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   TextWrapping="Wrap"
+                   Opacity="0"/>
+
+        <TextBlock x:Name="txtFPS" 
+                   Text="0" 
+                   Foreground="Yellow" 
+                   HorizontalAlignment="Right" 
+                   VerticalAlignment="Top" 
+                   Margin="10"
+                   IsHitTestVisible="False"
+                   FontSize="20"
+                   FontFamily="Segoe UI" />
+    </Grid>
+</Window>
