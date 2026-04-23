@@ -37,6 +37,7 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 ## 🚧 Prerequisite
 - [.NET 10.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 - [Wallpaper Engine](https://store.steampowered.com/app/431960/Wallpaper_Engine/)
+- [Lively Wallpaper](https://github.com/rocksdanister/lively/releases/latest)
 - [SignalRGB](https://signalrgb.com/)
 
 ## 🚀 Similar Projects
