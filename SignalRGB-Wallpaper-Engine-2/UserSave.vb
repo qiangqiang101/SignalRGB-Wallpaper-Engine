@@ -5,7 +5,7 @@ Public Class UserSave
 
     Public MatrixSizeType As MatrixSizeType
     Public MatrixSizeTier As MatrixSizeTier
-    Public CompositingQuality As Integer ' CompositingQuality
+    Public ShutdownEffect As ShutdownEffect
     Public ShowFps As Boolean
     Public BlurIntensity As Integer
     Public LedShape As LEDShape
@@ -14,6 +14,7 @@ Public Class UserSave
     Public FPS As Integer
     Public CoverImageStretch As Stretch
     Public BackgroundColor As Color
+    Public ShutdownColor As Color
     Public CpuUsagePauseValue As Integer
     Public CoverImage As String
 

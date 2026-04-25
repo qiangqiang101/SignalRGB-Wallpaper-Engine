@@ -16,6 +16,10 @@ Class MainWindow
     Public Sub New()
         InitializeComponent()
 
+#If DEBUG Then
+        WindowStyle = WindowStyle.SingleBorderWindow
+#End If
+
         tmConfig = New DispatcherTimer() With {.Interval = TimeSpan.FromSeconds(5), .IsEnabled = True}
         AddHandler tmConfig.Tick, AddressOf tmConfig_Tick
         tmCheckSignalRGB = New DispatcherTimer() With {.Interval = TimeSpan.FromSeconds(10), .IsEnabled = False}
@@ -117,7 +121,7 @@ Class MainWindow
         With MySave
             .MatrixSizeType = e.MatrixSizeType
             .MatrixSizeTier = e.MatrixSizeTier
-            .CompositingQuality = e.CompositingQuality
+            .ShutdownEffect = e.ShutdownEffect
             .ShowFps = e.ShowFps
             .BlurIntensity = e.BlurIntensity
             .LedShape = e.LEDShape

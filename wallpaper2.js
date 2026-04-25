@@ -9,12 +9,12 @@ export function DeviceType() { return "wifi"; }
 /* global
 discovery:readonly
 controller:readonly
+ShutdownEffect:readonly
 shutdownColor:readonly
 LightingMode:readonly
 forcedColor:readonly
 MatrixSize:readonly
 MatrixTier:readonly
-CompositingQuality:readonly
 BlurIntensity:readonly
 LedShape:readonly
 RoundedRectangleCornerRadius:readonly
@@ -28,12 +28,12 @@ CoverImageStretch:readonly
 */
 export function ControllableParameters() {
 	return [
-		{ "property": "shutdownColor", "group": "lighting", "label": "Shutdown Color", description: "This color is applied to the device when the System, or SignalRGB is shutting down", "min": "0", "max": "360", "type": "color", "default": "#009bde" },
+		{ "property": "ShutdownEffect", "group": "lighting", "label": "Shutdown Effect", description: "This mode is applied to the device when the System, or SignalRGB is shutting down.", "type": "combobox", "values": ["Solid Color", "Aurora", "Breathing", "Rainbow Wave (Left)", "Rainbow Wave (Right)", "Neon Wave (Left)", "Neon Wave (Right)", "Sunset Wave (Left)", "Sunset Wave (Right)", "Audio Party", "Rainbow Cycle", "Rainbow Pinwheel", "Fire"], "default": "Solid Color" },
+		{ "property": "shutdownColor", "group": "lighting", "label": "Shutdown Color", description: "This color is applied to the device when the System, or SignalRGB is shutting down.", "min": "0", "max": "360", "type": "color", "default": "#009bde" },
 		{ "property": "LightingMode", "group": "lighting", "label": "Lighting Mode", description: "Determines where the device's RGB comes from. Canvas will pull from the active Effect, while Forced will override it to a specific color", "type": "combobox", "values": ["Canvas", "Forced"], "default": "Canvas" },
 		{ "property": "forcedColor", "group": "lighting", "label": "Forced Color", description: "The color used when 'Forced' Lighting Mode is enabled", "min": "0", "max": "360", "type": "color", "default": "#009bde" },
 		{ "property": "MatrixSize", "group": "settings", "label": "Aspect Ratio", description: "Choose your screen's aspect ratio.", "type": "combobox", "values": ["4:1 Landscape", "4:1 Portrait", "4:3 Landscape", "4:3 Portrait", "5:4 Landscape", "5:4 Portrait", "16:9 Landscape", "16:9 Portrait", "16:10 Landscape", "16:10 Portrait", "21:9 Landscape", "21:9 Portrait", "32:9 Landscape", "32:9 Portrait"], "default": "16:9 Landscape" },
 		{ "property": "MatrixTier", "group": "settings", "label": "Display Size", description: "Choose the display size tier. Standard provides a balanced grid for typical setups, while Large increases the grid for more detail and a bigger LED canvas.", "type": "combobox", "values": ["Small", "Normal", "Large", "X Large"], "default": "Normal" },
-		// { "property": "CompositingQuality", "group": "settings", "label": "Compositing Quality", description: "The compositing quality determines the rendering quality level of composited images", "type": "combobox", "values": ["Default", "High Speed", "High Quality", "Camma Corrected", "Assume Linear"], "default": "Default" },
 		{ "property": "BlurIntensity", "group": "lighting", "label": "Blur Intensity", description: "Blur Intensity controls how soft or diffused the LEDs look. Lower values keep them sharp and defined, while higher values make them glow with a frosted, hazy effect.", "step": "1", "type": "number", "min": "0", "max": "100", "default": "20" },
 		{ "property": "LedShape", "group": "lighting", "label": "LED Shape", description: "Choose your preferred LED shape.", "type": "combobox", "values": ["Rectangle", "Rounded Rectangle", "Sphere"], "default": "Rectangle" },
 		{ "property": "RoundedRectangleCornerRadius", "group": "lighting", description: "Specifies how round you want your LED's corner. (Only works when LED Shape is Rounded Rectangle)", "label": "Rounded Rectangle Corner Radius", "step": "1", "type": "number", "min": "0", "max": "20", "default": "2" },
@@ -55,7 +55,10 @@ const SettingPacket = 0x01;
 //User settings
 const vMatrixSize = { "4:3 Landscape": 0, "4:3 Portrait": 1, "5:4 Landscape": 2, "5:4 Portrait": 3, "16:9 Landscape": 4, "16:9 Portrait": 5, "16:10 Landscape": 6, "16:10 Portrait": 7, "21:9 Landscape": 8, "21:9 Portrait": 9, "32:9 Landscape": 10, "32:9 Portrait": 11, "4:1 Landscape": 12, "4:1 Portrait": 13 };
 const vMatrixTier = { "Small": 0, "Normal": 1, "Large": 2, "X Large": 3 };
-// const vCompositingQuality = { "Default": 0, "High Speed": 1, "High Quality": 2, "Gamma Corrected": 3, "Assume Linear": 4 };
+const vShutdownEffect = { 
+	"Solid Color": 0, "Aurora": 1, "Breathing": 2, "Rainbow Wave (Left)": 3, "Rainbow Wave (Right)": 4, "Neon Wave (Left)": 5, "Neon Wave (Right)": 6, 
+	"Sunset Wave (Left)": 7, "Sunset Wave (Right)": 8, "Audio Party": 9, "Rainbow Cycle": 10, "Rainbow Pinwheel": 11, "Fire": 12
+};
 const vLedShape = { "Rectangle": 0, "Rounded Rectangle": 1, "Sphere": 2 };
 const vCoverImageStretch = { "None": 0, "Fill": 1, "Uniform": 2, "Uniform to Fill": 3 };
 const vLedPositions = {
@@ -128,9 +131,9 @@ export function onMatrixTierChanged() {
 	updateSettings();
 }
 
-// export function onCompositingQualityChanged() {
-// 	updateSettings();
-// }
+export function onShutdownEffectChanged() {
+	updateSettings();
+}
 
 export function onShowFpsChanged() {
 	updateSettings();
@@ -192,10 +195,11 @@ export function Shutdown(suspend) {
 }
 
 function updateSettings() {
-	let color = hexToRgb(BackgroundColor);
-	let packet = [SettingPacket, vMatrixSize[MatrixSize], vMatrixTier[MatrixTier], 0, ShowFps, BlurIntensity, // vCompositingQuality[CompositingQuality],
+	let bgcolor = hexToRgb(BackgroundColor);
+	let sdcolor = hexToRgb(shutdownColor);
+	let packet = [SettingPacket, vMatrixSize[MatrixSize], vMatrixTier[MatrixTier], vShutdownEffect[ShutdownEffect], ShowFps, BlurIntensity,
 		vLedShape[LedShape], RoundedRectangleCornerRadius, LedPadding, FPS, vCoverImageStretch[CoverImageStretch], 0, // CpuUsagePauseValue
-		color[0], color[1], color[2]]; //0x01 = Send Settings
+		bgcolor[0], bgcolor[1], bgcolor[2], sdcolor[0], sdcolor[1], sdcolor[2]]; //0x01 = Send Settings
 
 	// Convert string to bytes and add to packet
 	const coverImageBytes = stringToBytes(CoverImage);
@@ -290,6 +294,12 @@ function generateLedNames(count) {
 export function DiscoveryService() {
 	this.IconUrl = "https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/srgbwallpaper.png";
 	this.Initialize = () => {
+		// service.addController(new Wallpaper({
+		// 	id: "Wallpaper3",
+		// 	port: 8132,
+		// 	ip: "127.0.0.1",
+		// 	name: "Wallpaper Engine 2 (debug)",
+		// }));
 		service.addController(new Wallpaper({
 			id: "Wallpaper",
 			port: 8133,

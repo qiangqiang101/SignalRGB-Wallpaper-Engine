@@ -3,7 +3,7 @@
 
     Public Property Client As SignalRGBClient
 
-    Private _currentFpsDisplay As String = "0 FPS"
+    Private _currentFpsDisplay As String = "0"
     Public ReadOnly Property CurrentFps As String
         Get
             Return _currentFpsDisplay
@@ -80,21 +80,54 @@
         Dim targetList = Client.Colors
         If targetList Is Nothing Then Return
 
-        SyncLock targetList
-            Try
-                Dim totalLeds = w * h
-                If _stableColorSnapshot.Length <> totalLeds Then
-                    _stableColorSnapshot = New Color(totalLeds - 1) {}
-                End If
+        If (Now - Client.LastPacketTime).TotalSeconds > 2 Then
+            Select Case Client.ShutdownEffect
+                Case ShutdownEffect.Aurora
+                    _stableColorSnapshot.RenderAurora(w, h)
+                Case ShutdownEffect.Breathing
+                    _stableColorSnapshot.RenderBreathingColor(w, h, Client.ShutdownColor)
+                Case ShutdownEffect.RainbowLeft
+                    _stableColorSnapshot.RenderSunsetNeon(w, h, rainbowScheme)
+                Case ShutdownEffect.RainbowRight
+                    _stableColorSnapshot.RenderSunsetNeon(w, h, rainbowScheme, "right")
+                Case ShutdownEffect.NeonLeft
+                    _stableColorSnapshot.RenderSunsetNeon(w, h, neonScheme)
+                Case ShutdownEffect.NeonRight
+                    _stableColorSnapshot.RenderSunsetNeon(w, h, neonScheme, "right")
+                Case ShutdownEffect.SunsetLeft
+                    _stableColorSnapshot.RenderSunsetNeon(w, h, sunsetScheme)
+                Case ShutdownEffect.SunsetRight
+                    _stableColorSnapshot.RenderSunsetNeon(w, h, sunsetScheme, "right")
+                Case ShutdownEffect.AudioParty
+                    If Not AudioEngine.IsActive Then AudioEngine.Start()
+                    _stableColorSnapshot.RenderAudioParty(w, h)
+                Case ShutdownEffect.RainbowCycle
+                    _stableColorSnapshot.RenderRainbowCycle(w, h, rainbowScheme)
+                Case ShutdownEffect.RainbowPinWheel
+                    _stableColorSnapshot.RenderRainbowPinwheel(w, h, rainbowScheme)
+                Case ShutdownEffect.Fire
+                    _stableColorSnapshot.RenderFireShader(w, h)
+                Case Else
+                    _stableColorSnapshot.RenderSolidColor(w, h, Client.ShutdownColor)
+            End Select
+        Else
+            If AudioEngine.IsActive Then AudioEngine.Stop()
+            SyncLock targetList
+                Try
+                    Dim totalLeds = w * h
+                    If _stableColorSnapshot.Length <> totalLeds Then
+                        _stableColorSnapshot = New Color(totalLeds - 1) {}
+                    End If
 
-                If targetList.Count > 0 Then
-                    Dim actualCount = Math.Min(targetList.Count, _stableColorSnapshot.Length)
-                    targetList.CopyTo(0, _stableColorSnapshot, 0, actualCount)
-                End If
-            Catch ex As Exception
-                Return
-            End Try
-        End SyncLock
+                    If targetList.Count > 0 Then
+                        Dim actualCount = Math.Min(targetList.Count, _stableColorSnapshot.Length)
+                        targetList.CopyTo(0, _stableColorSnapshot, 0, actualCount)
+                    End If
+                Catch ex As Exception
+                    Return
+                End Try
+            End SyncLock
+        End If
 
         Dim cellW As Double = Me.ActualWidth / w
         Dim cellH As Double = Me.ActualHeight / h

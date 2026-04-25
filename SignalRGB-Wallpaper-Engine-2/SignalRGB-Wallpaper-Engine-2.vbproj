@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
@@ -46,5 +47,9 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if &quot;$(ConfigurationName)&quot;==&quot;Release&quot; (&#xD;&#xA;xcopy &quot;$(TargetDir)*.*&quot; &quot;E:\SteamLibrary\steamapps\common\wallpaper_engine\projects\myprojects\signalrgb-wallpa\&quot; /Y /I /E /EXCLUDE:$(ProjectDir)exclude.txt&#xD;&#xA;)" />
+  </Target>
 
 </Project>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SignalRGB_Wallpaper_Engine_2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Background="Black" WindowStyle="None" Foreground="White">
+        Title="MainWindow" Height="450" Width="800" Background="Transparent" WindowStyle="None" Foreground="White">
 
     <Grid x:Name="Container">
         <local:LedCanvas x:Name="ledCanvas"
@@ -33,7 +33,7 @@
 
         <TextBlock x:Name="txtFPS" 
                    Text="0" 
-                   Foreground="Yellow" 
+                   Foreground="Green" 
                    HorizontalAlignment="Right" 
                    VerticalAlignment="Top" 
                    Margin="10"

@@ -6,12 +6,19 @@ Public Class SignalRGBClient
     Private udpClient As UdpClient
     Private listenPort As Integer = 8133 ' Default port
     Private _isListening As Boolean = False
+    Private _lastPacketTime As DateTime = DateTime.Now
 
     Public Event SettingsChanged(sender As Object, e As SignalRGBSettingsChangedEventArgs)
 
     Public ReadOnly Property IsListening As Boolean
         Get
             Return _isListening
+        End Get
+    End Property
+
+    Public ReadOnly Property LastPacketTime As DateTime
+        Get
+            Return _lastPacketTime
         End Get
     End Property
 
@@ -210,10 +217,10 @@ Public Class SignalRGBClient
         End Get
     End Property
 
-    Private _compositingQuality As Integer
-    Public ReadOnly Property CompositingQuality() As Integer
+    Private _ShutdownEffect As ShutdownEffect
+    Public ReadOnly Property ShutdownEffect() As ShutdownEffect
         Get
-            Return _compositingQuality
+            Return _ShutdownEffect
         End Get
     End Property
 
@@ -273,6 +280,13 @@ Public Class SignalRGBClient
         End Get
     End Property
 
+    Private _shutdownColor As Color
+    Public ReadOnly Property ShutdownColor() As Color
+        Get
+            Return _shutdownColor
+        End Get
+    End Property
+
     Private _cpuUsagePauseValue As Integer
     Public ReadOnly Property CPUUsagePauseValue() As Integer
         Get
@@ -291,7 +305,7 @@ Public Class SignalRGBClient
         listenPort = port
         _matrixSizeType = save.MatrixSizeType
         _matrixSizeTier = save.MatrixSizeTier
-        _compositingQuality = save.CompositingQuality
+        _ShutdownEffect = save.ShutdownEffect
         _showFps = save.ShowFps
         _BlurIntensity = save.BlurIntensity
         _ledShape = save.LedShape
@@ -301,6 +315,7 @@ Public Class SignalRGBClient
         _CoverImageStretch = save.CoverImageStretch
         _cpuUsagePauseValue = save.CpuUsagePauseValue
         _backgroundColor = save.BackgroundColor
+        _shutdownColor = save.ShutdownColor
         _coverImage = save.CoverImage
     End Sub
 
@@ -317,6 +332,7 @@ Public Class SignalRGBClient
             While _isListening
                 Try
                     Dim packetData As Byte() = udpClient.Receive(remoteEP)
+                    _lastPacketTime = DateTime.Now
                     ProcessSignalRGBPacket(packetData, remoteEP)
                 Catch ex As Exception
                     If IsListening Then ' Only show error if we're still supposed to be listening
@@ -370,7 +386,7 @@ Public Class SignalRGBClient
             Try
                 _matrixSizeType = CInt(data(1))
                 _matrixSizeTier = CInt(data(2))
-                _compositingQuality = CInt(data(3))
+                _ShutdownEffect = CInt(data(3))
                 _showFps = CBool(data(4))
                 _BlurIntensity = CInt(data(5))
                 _ledShape = CInt(data(6))
@@ -380,10 +396,11 @@ Public Class SignalRGBClient
                 _CoverImageStretch = CInt(data(10))
                 _cpuUsagePauseValue = CInt(data(11))
                 _backgroundColor = Color.FromRgb(data(12), data(13), data(14))
-                _coverImage = Text.Encoding.UTF8.GetString(data.Skip(16).ToArray()).TrimEnd(Chr(0)) 'Skip 1 byte for length
+                _shutdownColor = Color.FromRgb(data(15), data(16), data(17))
+                _coverImage = Text.Encoding.UTF8.GetString(data.Skip(19).ToArray()).TrimEnd(Chr(0)) 'Skip 1 byte for length
 
-                Dim eventArgs = New SignalRGBSettingsChangedEventArgs(_matrixSizeType, _matrixSizeTier, _compositingQuality, _showFps, _BlurIntensity, _ledShape, _roundedRectangleCornerRadius,
-                                                                      _ledPadding, _FPS, _CoverImageStretch, _backgroundColor, _cpuUsagePauseValue, _coverImage)
+                Dim eventArgs = New SignalRGBSettingsChangedEventArgs(_matrixSizeType, _matrixSizeTier, _ShutdownEffect, _showFps, _BlurIntensity, _ledShape, _roundedRectangleCornerRadius,
+                                                                      _ledPadding, _FPS, _CoverImageStretch, _backgroundColor, _cpuUsagePauseValue, _coverImage, _shutdownColor)
                 RaiseEvent SettingsChanged(Me, eventArgs)
             Catch ex As Exception
                 Logger.Log($"Error parsing packet: {ex.Message} {ex.StackTrace}")
@@ -435,10 +452,10 @@ Public Class SignalRGBSettingsChangedEventArgs
         End Get
     End Property
 
-    Private _compositingQuality As Integer
-    Public ReadOnly Property CompositingQuality() As Integer
+    Private _ShutdownEffect As ShutdownEffect
+    Public ReadOnly Property ShutdownEffect() As ShutdownEffect
         Get
-            Return _compositingQuality
+            Return _ShutdownEffect
         End Get
     End Property
 
@@ -498,6 +515,13 @@ Public Class SignalRGBSettingsChangedEventArgs
         End Get
     End Property
 
+    Private _shutdownColor As Color
+    Public ReadOnly Property ShutdownColor() As Color
+        Get
+            Return _shutdownColor
+        End Get
+    End Property
+
     Private _cpuUsagePauseValue As Integer
     Public ReadOnly Property CPUUsagePauseValue() As Integer
         Get
@@ -512,11 +536,12 @@ Public Class SignalRGBSettingsChangedEventArgs
         End Get
     End Property
 
-    Public Sub New(matrixSizeType As MatrixSizeType, matrixSizeTier As MatrixSizeTier, compositingQuality As Integer, showFps As Boolean, BlurIntensity As Integer, ledShape As LEDShape,
-                   roundedRectangleCornerRadius As Integer, ledPadding As Single, FPS As Integer, CoverImageStretch As Stretch, backgroundColor As Color, cpuUsagePauseValue As Integer, coverImage As String)
+    Public Sub New(matrixSizeType As MatrixSizeType, matrixSizeTier As MatrixSizeTier, ShutdownEffect As ShutdownEffect, showFps As Boolean, BlurIntensity As Integer,
+                   ledShape As LEDShape, roundedRectangleCornerRadius As Integer, ledPadding As Single, FPS As Integer, CoverImageStretch As Stretch, backgroundColor As Color,
+                   cpuUsagePauseValue As Integer, coverImage As String, shutdownColor As Color)
         _matrixSizeType = matrixSizeType
         _matrixSizeTier = matrixSizeTier
-        _compositingQuality = compositingQuality
+        _ShutdownEffect = ShutdownEffect
         _showFps = showFps
         _BlurIntensity = BlurIntensity
         _ledShape = ledShape
@@ -527,6 +552,7 @@ Public Class SignalRGBSettingsChangedEventArgs
         _backgroundColor = backgroundColor
         _cpuUsagePauseValue = cpuUsagePauseValue
         _coverImage = coverImage
+        _shutdownColor = shutdownColor
     End Sub
 
 End Class
