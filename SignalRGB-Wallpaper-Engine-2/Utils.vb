@@ -3,7 +3,7 @@ Imports System.Runtime.CompilerServices
 
 Module Utils
 
-    Public SaveFile As String = "usersave.json"
+    Public SaveFile As String = "usersave2.json"
     Public MySave As UserSave = New UserSave()
     Public ShutdownEffect As ShutdownEffect = ShutdownEffect.SolidColor
     Public ShowFps As Integer = 0
@@ -211,9 +211,14 @@ Public Enum ShutdownEffect
     SolidColor
     Aurora
     Breathing
+    RainbowLeft
+    RainbowRight
     NeonLeft
     NeonRight
     SunsetLeft
     SunsetRight
     AudioParty
+    RainbowCycle
+    RainbowPinWheel
+    Fire
 End Enum

@@ -86,6 +86,10 @@
                     _stableColorSnapshot.RenderAurora(w, h)
                 Case ShutdownEffect.Breathing
                     _stableColorSnapshot.RenderBreathingColor(w, h, Client.ShutdownColor)
+                Case ShutdownEffect.RainbowLeft
+                    _stableColorSnapshot.RenderSunsetNeon(w, h, rainbowScheme)
+                Case ShutdownEffect.RainbowRight
+                    _stableColorSnapshot.RenderSunsetNeon(w, h, rainbowScheme, "right")
                 Case ShutdownEffect.NeonLeft
                     _stableColorSnapshot.RenderSunsetNeon(w, h, neonScheme)
                 Case ShutdownEffect.NeonRight
@@ -95,11 +99,19 @@
                 Case ShutdownEffect.SunsetRight
                     _stableColorSnapshot.RenderSunsetNeon(w, h, sunsetScheme, "right")
                 Case ShutdownEffect.AudioParty
+                    If Not AudioEngine.IsActive Then AudioEngine.Start()
                     _stableColorSnapshot.RenderAudioParty(w, h)
+                Case ShutdownEffect.RainbowCycle
+                    _stableColorSnapshot.RenderRainbowCycle(w, h, rainbowScheme)
+                Case ShutdownEffect.RainbowPinWheel
+                    _stableColorSnapshot.RenderRainbowPinwheel(w, h, rainbowScheme)
+                Case ShutdownEffect.Fire
+                    _stableColorSnapshot.RenderFireShader(w, h)
                 Case Else
                     _stableColorSnapshot.RenderSolidColor(w, h, Client.ShutdownColor)
             End Select
         Else
+            If AudioEngine.IsActive Then AudioEngine.Stop()
             SyncLock targetList
                 Try
                     Dim totalLeds = w * h

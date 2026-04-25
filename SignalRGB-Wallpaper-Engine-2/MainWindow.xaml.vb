@@ -16,6 +16,10 @@ Class MainWindow
     Public Sub New()
         InitializeComponent()
 
+#If DEBUG Then
+        WindowStyle = WindowStyle.SingleBorderWindow
+#End If
+
         tmConfig = New DispatcherTimer() With {.Interval = TimeSpan.FromSeconds(5), .IsEnabled = True}
         AddHandler tmConfig.Tick, AddressOf tmConfig_Tick
         tmCheckSignalRGB = New DispatcherTimer() With {.Interval = TimeSpan.FromSeconds(10), .IsEnabled = False}
@@ -31,7 +35,6 @@ Class MainWindow
                 ReadSaveValues(MySave)
             End If
 
-            AudioEngine.Start()
             Background = BackgroundColor.SetBrushColor()
             ledCanvas.SetBlurIntensity(Utils.BlurIntensity)
             DiffuserImage.Source = If(Utils.BackgroundImage = Nothing, Nothing, Utils.BackgroundImage.TryParseCoverImage())
