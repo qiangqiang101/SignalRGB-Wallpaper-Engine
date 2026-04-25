@@ -1,12 +1,11 @@
-﻿Imports System.Drawing
-Imports System.IO
+﻿Imports System.IO
 Imports System.Runtime.CompilerServices
 
 Module Utils
 
     Public SaveFile As String = "usersave.json"
     Public MySave As UserSave = New UserSave()
-    Public CompositingQuality As Integer = 0
+    Public ShutdownEffect As ShutdownEffect = ShutdownEffect.SolidColor
     Public ShowFps As Integer = 0
     Public BlurIntensity As Integer = 0
     Public FPS As Integer = 60
@@ -18,7 +17,7 @@ Module Utils
 
     Public Sub UpdateSRGBConfigValues(s As SignalRGBSettingsChangedEventArgs)
         Try
-            CompositingQuality = s.CompositingQuality
+            ShutdownEffect = s.ShutdownEffect
             ShowFps = s.ShowFps
             BlurIntensity = s.BlurIntensity
             FPS = s.FPS
@@ -33,7 +32,7 @@ Module Utils
 
     Public Sub ReadSaveValues(s As UserSave)
         Try
-            CompositingQuality = s.CompositingQuality
+            ShutdownEffect = s.ShutdownEffect
             ShowFps = s.ShowFps
             BlurIntensity = s.BlurIntensity
             FPS = s.FPS
@@ -120,6 +119,62 @@ Module Utils
         Return CInt(1000 / fps)
     End Function
 
+    Public Function ColorFromHsl(h As Double, s As Double, l As Double) As Color
+        Dim r, g, b As Double
+        If s = 0 Then
+            r = l : g = l : b = l
+        Else
+            Dim q = If(l < 0.5, l * (1 + s), l + s - l * s)
+            Dim p = 2 * l - q
+            r = HueToRgb(p, q, h + 1 / 3)
+            g = HueToRgb(p, q, h)
+            b = HueToRgb(p, q, h - 1 / 3)
+        End If
+        Return Color.FromRgb(CByte(r * 255), CByte(g * 255), CByte(b * 255))
+    End Function
+
+    Private Function HueToRgb(p As Double, q As Double, t As Double) As Double
+        If t < 0 Then t += 1
+        If t > 1 Then t -= 1
+        If t < 1 / 6 Then Return p + (q - p) * 6 * t
+        If t < 1 / 2 Then Return q
+        If t < 2 / 3 Then Return p + (q - p) * (2 / 3 - t) * 6
+        Return p
+    End Function
+
+    Public Function ColorFromHsv(h As Double, s As Double, v As Double) As Color
+        ' Ensure h is between 0 and 360, s and v between 0 and 1
+        h = ((h Mod 360) + 360) Mod 360
+        s = Math.Clamp(s, 0, 1)
+        v = Math.Clamp(v, 0, 1)
+
+        Dim c As Double = v * s
+        Dim x As Double = c * (1 - Math.Abs(((h / 60.0) Mod 2) - 1))
+        Dim m As Double = v - c
+
+        Dim r1, g1, b1 As Double
+
+        If h < 60 Then
+            r1 = c : g1 = x : b1 = 0
+        ElseIf h < 120 Then
+            r1 = x : g1 = c : b1 = 0
+        ElseIf h < 180 Then
+            r1 = 0 : g1 = c : b1 = x
+        ElseIf h < 240 Then
+            r1 = 0 : g1 = x : b1 = c
+        ElseIf h < 300 Then
+            r1 = x : g1 = 0 : b1 = c
+        Else
+            r1 = c : g1 = 0 : b1 = x
+        End If
+
+        Return Color.FromRgb(
+            CByte((r1 + m) * 255),
+            CByte((g1 + m) * 255),
+            CByte((b1 + m) * 255)
+        )
+    End Function
+
 End Module
 
 Public Enum LEDShape
@@ -150,4 +205,15 @@ Public Enum MatrixSizeTier
     Normal
     Large
     XLarge
+End Enum
+
+Public Enum ShutdownEffect
+    SolidColor
+    Aurora
+    Breathing
+    NeonLeft
+    NeonRight
+    SunsetLeft
+    SunsetRight
+    AudioParty
 End Enum

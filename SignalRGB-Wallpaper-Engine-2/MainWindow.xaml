@@ -33,7 +33,7 @@
 
         <TextBlock x:Name="txtFPS" 
                    Text="0" 
-                   Foreground="Yellow" 
+                   Foreground="Green" 
                    HorizontalAlignment="Right" 
                    VerticalAlignment="Top" 
                    Margin="10"

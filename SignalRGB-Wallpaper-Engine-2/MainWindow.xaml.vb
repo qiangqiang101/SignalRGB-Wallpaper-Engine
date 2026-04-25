@@ -31,6 +31,7 @@ Class MainWindow
                 ReadSaveValues(MySave)
             End If
 
+            AudioEngine.Start()
             Background = BackgroundColor.SetBrushColor()
             ledCanvas.SetBlurIntensity(Utils.BlurIntensity)
             DiffuserImage.Source = If(Utils.BackgroundImage = Nothing, Nothing, Utils.BackgroundImage.TryParseCoverImage())
@@ -117,7 +118,7 @@ Class MainWindow
         With MySave
             .MatrixSizeType = e.MatrixSizeType
             .MatrixSizeTier = e.MatrixSizeTier
-            .CompositingQuality = e.CompositingQuality
+            .ShutdownEffect = e.ShutdownEffect
             .ShowFps = e.ShowFps
             .BlurIntensity = e.BlurIntensity
             .LedShape = e.LEDShape
