@@ -24,7 +24,7 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3581131369) (Second Screen)
 
 ### Lively Wallpaper
-[Download](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/releases/tag/1.3B)
+[Download](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/releases)
 
 ## 🔧 Troubleshooting
 - [Troubleshooting Wiki](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Troubleshooting)
@@ -36,8 +36,7 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 
 ## 🚧 Prerequisite
 - [.NET 10.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-- [Wallpaper Engine](https://store.steampowered.com/app/431960/Wallpaper_Engine/)
-- [Lively Wallpaper](https://github.com/rocksdanister/lively/releases/latest)
+- [Wallpaper Engine](https://store.steampowered.com/app/431960/Wallpaper_Engine/) or [Lively Wallpaper](https://github.com/rocksdanister/lively/releases/latest)
 - [SignalRGB](https://signalrgb.com/)
 
 ## 🚀 Similar Projects
