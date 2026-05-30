@@ -46,7 +46,7 @@ Class MainWindow
     End Sub
 
     Public Sub Connect()
-        If IsProcessRunning("SignalRGB") OrElse IsProcessRunning("RGBJunkie") Then
+        If IsProcessRunning("SignalRgb") OrElse IsProcessRunning("RGBJunkie") Then
             Try
                 If srgbClient Is Nothing Then
                     srgbClient = New SignalRGBClient(MySave, SignalRGBPort)
