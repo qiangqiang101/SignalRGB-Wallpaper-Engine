@@ -102,9 +102,9 @@ Module Utils
         End Try
     End Function
 
-    Public Function IsSignalRGBRunning() As Boolean
-        Dim SignalRGB As Process = Process.GetProcessesByName("SignalRgb").FirstOrDefault
-        Return Not SignalRGB Is Nothing
+    Public Function IsProcessRunning(processName As String) As Boolean
+        Dim processes As Process() = Process.GetProcesses()
+        Return processes.Any(Function(p) p.ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase))
     End Function
 
     <Extension>

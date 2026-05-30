@@ -49,7 +49,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if &quot;$(ConfigurationName)&quot;==&quot;Release&quot; (&#xD;&#xA;xcopy &quot;$(TargetDir)*.*&quot; &quot;E:\SteamLibrary\steamapps\common\wallpaper_engine\projects\myprojects\signalrgb-wallpa\&quot; /Y /I /E /EXCLUDE:$(ProjectDir)exclude.txt&#xD;&#xA;)" />
+    <Exec Command="if &quot;$(ConfigurationName)&quot;==&quot;Release&quot; (&#xD;&#xA;    if exist &quot;E:\&quot; (&#xD;&#xA;        xcopy &quot;$(TargetDir)*.*&quot; &quot;E:\SteamLibrary\steamapps\common\wallpaper_engine\projects\myprojects\signalrgb-wallpa\&quot; /Y /I /E /EXCLUDE:$(ProjectDir)exclude.txt&#xD;&#xA;    ) else (&#xD;&#xA;        echo Skipping deployment: E drive not found on this machine.&#xD;&#xA;    )&#xD;&#xA;)" />
   </Target>
 
 </Project>
