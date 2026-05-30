@@ -57,7 +57,7 @@ export const rgbjunkie = {
 		{ id: "FPS", label: "Target FPS", description: "Wallpaper animation frame rate.", type: "number", min: "1", max: "240", step: "1", default: "60" },
 		{ id: "ShowFps", group: "settings", label: "Show FPS", description: "Overlay FPS on the wallpaper.", type: "boolean", default: "false" },
 		{ id: "BackgroundColor", group: "settings", label: "Background Color", description: "Wallpaper background color.", type: "color", default: "#000000", min: "0", max: "360" },
-		{ id: "CoverImage", label: "Cover Image", type: "string", description: "Diffuser image (local path or URL).", default: "https://github.com/qiangqiang101/OpenRGB-Wallpaper/raw/master/Wallpaper-Wallpaper/razer5.png?raw=true" },
+		{ id: "CoverImage", label: "Cover Image", type: "string", browse: "image", description: "Diffuser image (local path or URL).", default: "https://github.com/qiangqiang101/OpenRGB-Wallpaper/raw/master/Wallpaper-Wallpaper/razer5.png?raw=true" },
 		{ id: "CoverImageStretch", group: "settings", label: "Cover Image Stretch", description: "How the cover image is scaled.", type: "combobox", values: ["None", "Fill", "Uniform", "Uniform to Fill"], default: "Uniform" },
 	],
 };
@@ -209,28 +209,11 @@ export function initialize() {
 	syncMatrixLayout();
 	const fps = Math.max(1, Math.min(240, Number(FPS) || 60));
 	device.setFrameRateTarget(fps);
-	updateSettings();
+	// Settings UDP is sent on first render / resync after RGBJunkie restores saved plugin params.
 }
 
 let __rgbjWallpaperSettingsResyncOnRender = false;
-
-export function render() {
-	// Companion may start after RGBJunkie; resend settings once when the engine begins streaming colors.
-	if (!__rgbjWallpaperSettingsResyncOnRender) {
-		__rgbjWallpaperSettingsResyncOnRender = true;
-		updateSettings();
-	}
-	grabColors();
-}
-
-/** Host calls this when the Wallpaper Engine companion opens UDP 8133 after a delayed connect. */
-export function resyncCompanionSettings() {
-	updateSettings();
-}
-
-export function shutdown(suspend) {
-	grabColors(true);
-}
+let __rgbjWallpaperLastSettingsKey = "";
 
 function updateSettings() {
 	let bgcolor = hexToRgb(BackgroundColor);
@@ -244,7 +227,30 @@ function updateSettings() {
 	packet.push(coverImageBytes.length); // Length prefix
 	packet.push(...coverImageBytes);
 
+	const settingsKey = packet.join(",");
+	if (settingsKey === __rgbjWallpaperLastSettingsKey) return;
+	__rgbjWallpaperLastSettingsKey = settingsKey;
+
 	udp.send(controller.ip, controller.port, packet);
+}
+
+export function render() {
+	// Companion may start after RGBJunkie; resend settings once when the engine begins streaming colors.
+	if (!__rgbjWallpaperSettingsResyncOnRender) {
+		__rgbjWallpaperSettingsResyncOnRender = true;
+		updateSettings();
+	}
+	grabColors();
+}
+
+/** Host calls this when the Wallpaper Engine companion opens UDP 8133 after a delayed connect. */
+export function resyncCompanionSettings() {
+	__rgbjWallpaperLastSettingsKey = "";
+	updateSettings();
+}
+
+export function shutdown(suspend) {
+	grabColors(true);
 }
 
 function grabColors(shutdown = false) {
