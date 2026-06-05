@@ -171,6 +171,7 @@ function syncMatrixLayoutIfNeeded() {
 }
 
 export function onStreamModeChanged() {
+	__rgbjWallpaperLastImageMs = 0;
 	rgbjWallpaperForceSettingsUdp();
 	updateSettings();
 }
@@ -362,7 +363,7 @@ function sendImagePackets(jpegBytes, width, height) {
 	const numPackets = Math.ceil(jpegBytes.length / MaxImageChunkBytes);
 	for (let curr = 0; curr < numPackets; curr++) {
 		const start = curr * MaxImageChunkBytes;
-		const chunk = jpegBytes.slice(start, start + MaxImageChunkBytes);
+		const end = Math.min(start + MaxImageChunkBytes, jpegBytes.length);
 		const packet = [
 			ImagePacket,
 			curr,
@@ -371,13 +372,24 @@ function sendImagePackets(jpegBytes, width, height) {
 			(width >> 8) & 0xff,
 			height & 0xff,
 			(height >> 8) & 0xff,
-			...chunk,
 		];
+		for (let i = start; i < end; i++) packet.push(jpegBytes[i]);
 		udp.send(controller.ip, controller.port, packet);
 	}
 }
 
+let __rgbjWallpaperLastImageMs = 0;
+
+function rgbjFullCanvasMinIntervalMs() {
+	const fps = Math.max(1, Math.min(30, Number(FPS) || 60));
+	return 1000 / fps;
+}
+
 function grabFullCanvas(shutdown = false) {
+	if (!shutdown) {
+		const now = Date.now();
+		if (now - __rgbjWallpaperLastImageMs < rgbjFullCanvasMinIntervalMs()) return;
+	}
 	const gridSize = vLedSizes[MatrixSize] && vLedSizes[MatrixSize][MatrixTier];
 	if (!gridSize) return;
 	const devW = gridSize[0];
@@ -398,7 +410,9 @@ function grabFullCanvas(shutdown = false) {
 	} else {
 		return;
 	}
+	if (!jpeg || jpeg.length < 800) return;
 	sendImagePackets(jpeg, out.w, out.h);
+	if (!shutdown) __rgbjWallpaperLastImageMs = Date.now();
 }
 
 function grabColors(shutdown = false) {
