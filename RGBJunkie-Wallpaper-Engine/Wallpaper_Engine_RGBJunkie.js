@@ -28,6 +28,7 @@ ShowFps:readonly
 BackgroundColor:readonly
 CoverImage:readonly
 CoverImageStretch:readonly
+StreamMode:readonly
 */
 
 export const rgbjunkie = {
@@ -48,16 +49,17 @@ export const rgbjunkie = {
 		{ id: "shutdownColor", group: "lighting", label: "Shutdown Color", description: "Color used on shutdown.", type: "color", default: "#009bde", min: "0", max: "360" },
 		{ id: "LightingMode", group: "lighting", label: "Lighting Mode", description: "Canvas pulls from the active effect; Forced uses a single color.", type: "combobox", values: ["Canvas", "Forced"], default: "Canvas" },
 		{ id: "forcedColor", group: "lighting", label: "Forced Color", description: "Color when Lighting Mode is Forced.", type: "color", default: "#009bde", min: "0", max: "360" },
+		{ id: "StreamMode", group: "settings", label: "Stream mode", description: "Virtual LEDs matches Wallpaper Engine (coarse LED grid). Full canvas sends a sharp JPEG of your effect to the RGBJunkie Lively bridge only.", type: "combobox", values: ["Virtual LEDs", "Full canvas"], default: "Virtual LEDs" },
 		{ id: "MatrixSize", group: "settings", label: "Aspect Ratio", description: "Screen aspect ratio for the virtual LED grid.", type: "combobox", values: ["4:1 Landscape", "4:1 Portrait", "4:3 Landscape", "4:3 Portrait", "5:4 Landscape", "5:4 Portrait", "16:9 Landscape", "16:9 Portrait", "16:10 Landscape", "16:10 Portrait", "21:9 Landscape", "21:9 Portrait", "32:9 Landscape", "32:9 Portrait"], default: "16:9 Landscape" },
 		{ id: "MatrixTier", group: "settings", label: "Display Size", description: "Grid density tier.", type: "combobox", values: ["Small", "Normal", "Large", "X Large"], default: "Normal" },
 		{ id: "BlurIntensity", group: "lighting", label: "Blur Intensity", description: "LED glow / diffusion amount.", type: "number", min: "0", max: "100", step: "1", default: "20" },
-		{ id: "LedShape", group: "lighting", label: "LED Shape", description: "Virtual LED shape on the wallpaper.", type: "combobox", values: ["Rectangle", "Rounded Rectangle", "Sphere"], default: "Rectangle" },
+		{ id: "LedShape", group: "lighting", label: "LED Shape", description: "Virtual LED shape on the wallpaper.", type: "combobox", values: ["Rectangle", "Rounded Rectangle", "Circle"], default: "Rectangle" },
 		{ id: "RoundedRectangleCornerRadius", group: "lighting", label: "Rounded Rectangle Corner Radius", description: "Corner radius when LED Shape is Rounded Rectangle.", type: "number", min: "0", max: "20", step: "1", default: "2" },
 		{ id: "LedPadding", group: "lighting", label: "LED Padding", description: "Spacing between virtual LEDs.", type: "number", min: "0", max: "250", step: "1", default: "0" },
 		{ id: "FPS", label: "Target FPS", description: "Wallpaper animation frame rate.", type: "number", min: "1", max: "240", step: "1", default: "60" },
 		{ id: "ShowFps", group: "settings", label: "Show FPS", description: "Overlay FPS on the wallpaper.", type: "boolean", default: "false" },
 		{ id: "BackgroundColor", group: "settings", label: "Background Color", description: "Wallpaper background color.", type: "color", default: "#000000", min: "0", max: "360" },
-		{ id: "CoverImage", label: "Cover Image", type: "string", description: "Diffuser image (local path or URL).", default: "https://github.com/qiangqiang101/OpenRGB-Wallpaper/raw/master/Wallpaper-Wallpaper/razer5.png?raw=true" },
+		{ id: "CoverImage", label: "Cover Image", type: "string", browse: "image", description: "Diffuser image (local path or URL).", default: "https://raw.githubusercontent.com/qiangqiang101/OpenRGB-Wallpaper/master/Wallpaper-Wallpaper/razer5.png" },
 		{ id: "CoverImageStretch", group: "settings", label: "Cover Image Stretch", description: "How the cover image is scaled.", type: "combobox", values: ["None", "Fill", "Uniform", "Uniform to Fill"], default: "Uniform" },
 	],
 };
@@ -70,6 +72,9 @@ export function version() {
 const MaxLedsInPacket = 480; //483;
 const ColorPacket = 0x00;
 const SettingPacket = 0x01;
+const ImagePacket = 0x02;
+/** JPEG payload per UDP packet (after 7-byte image header). */
+const MaxImageChunkBytes = 60000;
 
 //User settings
 const vMatrixSize = { "4:3 Landscape": 0, "4:3 Portrait": 1, "5:4 Landscape": 2, "5:4 Portrait": 3, "16:9 Landscape": 4, "16:9 Portrait": 5, "16:10 Landscape": 6, "16:10 Portrait": 7, "21:9 Landscape": 8, "21:9 Portrait": 9, "32:9 Landscape": 10, "32:9 Portrait": 11, "4:1 Landscape": 12, "4:1 Portrait": 13 };
@@ -78,7 +83,7 @@ const vShutdownEffect = {
 	"Solid Color": 0, "Aurora": 1, "Breathing": 2, "Rainbow Wave (Left)": 3, "Rainbow Wave (Right)": 4, "Neon Wave (Left)": 5, "Neon Wave (Right)": 6, 
 	"Sunset Wave (Left)": 7, "Sunset Wave (Right)": 8, "Audio Party": 9, "Rainbow Cycle": 10, "Rainbow Pinwheel": 11, "Fire": 12
 };
-const vLedShape = { "Rectangle": 0, "Rounded Rectangle": 1, "Sphere": 2 };
+const vLedShape = { "Rectangle": 0, "Rounded Rectangle": 1, "Circle": 2, "Sphere": 2 };
 const vCoverImageStretch = { "None": 0, "Fill": 1, "Uniform": 2, "Uniform to Fill": 3 };
 const vLedPositions = {
 	"4:1 Landscape": { "Small": generateLedPositions(8, 2), "Normal": generateLedPositions(16, 4), "Large": generateLedPositions(32, 8), "X Large": generateLedPositions(64, 16) },
@@ -138,17 +143,47 @@ const vLedNames = {
 	"32:9 Portrait": _vLedNames["32:9"],
 };
 
+let __rgbjWallpaperGridPrimed = false;
+let __rgbjWallpaperLastMatrixKey = "";
+
+function rgbjWallpaperMatrixKey() {
+	return String(MatrixSize == null ? "" : MatrixSize) + "\0" + String(MatrixTier == null ? "" : MatrixTier);
+}
+
 function syncMatrixLayout() {
-	device.setSize(vLedSizes[MatrixSize][MatrixTier]);
-	device.setControllableLeds(vLedNames[MatrixSize][MatrixTier], vLedPositions[MatrixSize][MatrixTier]);
+	const sizes = vLedSizes[MatrixSize];
+	const names = vLedNames[MatrixSize];
+	const positions = vLedPositions[MatrixSize] && vLedPositions[MatrixSize][MatrixTier];
+	if (!sizes || !names || !positions || !sizes[MatrixTier]) {
+		return false;
+	}
+	device.setSize(sizes[MatrixTier]);
+	device.setControllableLeds(names[MatrixTier], positions);
+	__rgbjWallpaperGridPrimed = false;
+	return true;
+}
+
+function syncMatrixLayoutIfNeeded() {
+	const key = rgbjWallpaperMatrixKey();
+	if (key === __rgbjWallpaperLastMatrixKey) return;
+	__rgbjWallpaperLastMatrixKey = key;
+	syncMatrixLayout();
+}
+
+export function onStreamModeChanged() {
+	__rgbjWallpaperLastImageMs = 0;
+	rgbjWallpaperForceSettingsUdp();
+	updateSettings();
 }
 
 export function onMatrixSizeChanged() {
+	__rgbjWallpaperLastMatrixKey = "";
 	syncMatrixLayout();
 	updateSettings();
 }
 
 export function onMatrixTierChanged() {
+	__rgbjWallpaperLastMatrixKey = "";
 	syncMatrixLayout();
 	updateSettings();
 }
@@ -161,19 +196,27 @@ export function onShowFpsChanged() {
 	updateSettings();
 }
 
+function rgbjWallpaperForceSettingsUdp() {
+	__rgbjWallpaperLastSettingsKey = "";
+}
+
 export function onBlurIntensityChanged() {
+	rgbjWallpaperForceSettingsUdp();
 	updateSettings();
 }
 
 export function onLedShapeChanged() {
+	rgbjWallpaperForceSettingsUdp();
 	updateSettings();
 }
 
 export function onRoundedRectangleCornerRadiusChanged() {
+	rgbjWallpaperForceSettingsUdp();
 	updateSettings();
 }
 
 export function onLedPaddingChanged() {
+	rgbjWallpaperForceSettingsUdp();
 	updateSettings();
 }
 
@@ -184,10 +227,12 @@ export function onFPSChanged() {
 }
 
 export function onCoverImageStretchChanged() {
+	rgbjWallpaperForceSettingsUdp();
 	updateSettings();
 }
 
 export function onCoverImageChanged() {
+	__rgbjWallpaperLastSettingsKey = "";
 	updateSettings();
 }
 
@@ -206,6 +251,7 @@ export function getLedPositions() {
 export function initialize() {
 	device.setName(controller.name);
 	device.addFeature("udp");
+	__rgbjWallpaperLastMatrixKey = "";
 	syncMatrixLayout();
 	const fps = Math.max(1, Math.min(240, Number(FPS) || 60));
 	device.setFrameRateTarget(fps);
@@ -213,8 +259,87 @@ export function initialize() {
 }
 
 let __rgbjWallpaperSettingsResyncOnRender = false;
+let __rgbjWallpaperLastSettingsKey = "";
+
+function rgbjSettingBool(value) {
+	return value === true || value === 1 || value === "1" || String(value).toLowerCase() === "true";
+}
+
+function rgbjWallpaperLedShapeByte() {
+	const raw = LedShape;
+	if (raw != null && vLedShape[raw] !== undefined) return vLedShape[raw] | 0;
+	const n = Number(raw);
+	return n >= 0 && n <= 2 ? n | 0 : 0;
+}
+
+function rgbjWallpaperCoverStretchByte() {
+	const raw = CoverImageStretch;
+	if (raw != null && vCoverImageStretch[raw] !== undefined) return vCoverImageStretch[raw] | 0;
+	const n = Number(raw);
+	if (n >= 0 && n <= 3) return n | 0;
+	return 2;
+}
+
+function rgbjWallpaperStreamModeByte() {
+	return String(StreamMode || "").trim().toLowerCase() === "full canvas" ? 1 : 0;
+}
+
+function rgbjWallpaperUsesFullCanvas() {
+	return rgbjWallpaperStreamModeByte() === 1;
+}
+
+/** Output JPEG size for full-canvas mode (long edge 1280 px, same aspect as the matrix). */
+function rgbjCanvasOutputSize() {
+	const gridSize = vLedSizes[MatrixSize] && vLedSizes[MatrixSize][MatrixTier];
+	if (!gridSize) return { w: 1280, h: 720 };
+	const gw = gridSize[0];
+	const gh = gridSize[1];
+	const longEdge = 1280;
+	if (gw >= gh) {
+		return { w: longEdge, h: Math.max(1, Math.round((longEdge * gh) / gw)) };
+	}
+	return { w: Math.max(1, Math.round((longEdge * gw) / gh)), h: longEdge };
+}
+
+function updateSettings() {
+	const gridSize = vLedSizes[MatrixSize] && vLedSizes[MatrixSize][MatrixTier];
+	const matrixIdx = vMatrixSize[MatrixSize];
+	const tierIdx = vMatrixTier[MatrixTier];
+	if (!gridSize || matrixIdx === undefined || tierIdx === undefined) {
+		__rgbjWallpaperSettingsResyncOnRender = false;
+		try {
+			console.warn(
+				"[RGBJunkie][Wallpaper] invalid Aspect Ratio / Display Size:",
+				MatrixSize,
+				MatrixTier
+			);
+		} catch (_e) { /* ignore */ }
+		return;
+	}
+	let bgcolor = hexToRgb(BackgroundColor);
+	let sdcolor = hexToRgb(shutdownColor);
+	let packet = [SettingPacket, matrixIdx, tierIdx, vShutdownEffect[ShutdownEffect], rgbjSettingBool(ShowFps) ? 1 : 0, BlurIntensity,
+		rgbjWallpaperLedShapeByte(), RoundedRectangleCornerRadius, LedPadding, FPS, rgbjWallpaperCoverStretchByte(), rgbjWallpaperStreamModeByte(),
+		bgcolor[0], bgcolor[1], bgcolor[2], sdcolor[0], sdcolor[1], sdcolor[2]]; //0x01 = Send Settings
+
+	// Convert string to bytes and add to packet
+	const coverImageBytes = stringToBytes(CoverImage);
+	packet.push(coverImageBytes.length); // Length prefix
+	packet.push(...coverImageBytes);
+
+	const settingsKey = packet.join(",");
+	if (settingsKey === __rgbjWallpaperLastSettingsKey) return;
+	__rgbjWallpaperLastSettingsKey = settingsKey;
+
+	udp.send(controller.ip, controller.port, packet);
+}
 
 export function render() {
+	if (typeof __rgbjSyncControllableParams === "function") {
+		__rgbjSyncControllableParams();
+	}
+	// Refresh grid when Aspect Ratio / Display Size changes (not every frame — avoids silent render failures).
+	syncMatrixLayoutIfNeeded();
 	// Companion may start after RGBJunkie; resend settings once when the engine begins streaming colors.
 	if (!__rgbjWallpaperSettingsResyncOnRender) {
 		__rgbjWallpaperSettingsResyncOnRender = true;
@@ -225,6 +350,7 @@ export function render() {
 
 /** Host calls this when the Wallpaper Engine companion opens UDP 8133 after a delayed connect. */
 export function resyncCompanionSettings() {
+	__rgbjWallpaperLastSettingsKey = "";
 	updateSettings();
 }
 
@@ -232,29 +358,84 @@ export function shutdown(suspend) {
 	grabColors(true);
 }
 
-function updateSettings() {
-	let bgcolor = hexToRgb(BackgroundColor);
-	let sdcolor = hexToRgb(shutdownColor);
-	let packet = [SettingPacket, vMatrixSize[MatrixSize], vMatrixTier[MatrixTier], vShutdownEffect[ShutdownEffect], ShowFps ? 1 : 0, BlurIntensity,
-		vLedShape[LedShape], RoundedRectangleCornerRadius, LedPadding, FPS, vCoverImageStretch[CoverImageStretch], 0, // CpuUsagePauseValue
-		bgcolor[0], bgcolor[1], bgcolor[2], sdcolor[0], sdcolor[1], sdcolor[2]]; //0x01 = Send Settings
+function sendImagePackets(jpegBytes, width, height) {
+	if (!jpegBytes || jpegBytes.length === 0) return;
+	const numPackets = Math.ceil(jpegBytes.length / MaxImageChunkBytes);
+	for (let curr = 0; curr < numPackets; curr++) {
+		const start = curr * MaxImageChunkBytes;
+		const end = Math.min(start + MaxImageChunkBytes, jpegBytes.length);
+		const packet = [
+			ImagePacket,
+			curr,
+			numPackets,
+			width & 0xff,
+			(width >> 8) & 0xff,
+			height & 0xff,
+			(height >> 8) & 0xff,
+		];
+		for (let i = start; i < end; i++) packet.push(jpegBytes[i]);
+		udp.send(controller.ip, controller.port, packet);
+	}
+}
 
-	// Convert string to bytes and add to packet
-	const coverImageBytes = stringToBytes(CoverImage);
-	packet.push(coverImageBytes.length); // Length prefix
-	packet.push(...coverImageBytes);
+let __rgbjWallpaperLastImageMs = 0;
 
-	udp.send(controller.ip, controller.port, packet);
+function rgbjFullCanvasMinIntervalMs() {
+	const fps = Math.max(1, Math.min(30, Number(FPS) || 60));
+	return 1000 / fps;
+}
+
+function grabFullCanvas(shutdown = false) {
+	if (!shutdown) {
+		const now = Date.now();
+		if (now - __rgbjWallpaperLastImageMs < rgbjFullCanvasMinIntervalMs()) return;
+	}
+	const gridSize = vLedSizes[MatrixSize] && vLedSizes[MatrixSize][MatrixTier];
+	if (!gridSize) return;
+	const devW = gridSize[0];
+	const devH = gridSize[1];
+	const out = rgbjCanvasOutputSize();
+	let jpeg;
+	if (shutdown) {
+		jpeg = device.ConvertColorToImageBuffer(shutdownColor, out.w, out.h, "JPEG");
+	} else if (LightingMode === "Forced") {
+		jpeg = device.ConvertColorToImageBuffer(forcedColor, out.w, out.h, "JPEG");
+	} else if (typeof device.getImageBuffer === "function") {
+		jpeg = device.getImageBuffer(0, 0, devW, devH, {
+			outputWidth: out.w,
+			outputHeight: out.h,
+			format: "JPEG",
+			quality: 0.82,
+		});
+	} else {
+		return;
+	}
+	if (!jpeg || jpeg.length < 800) return;
+	sendImagePackets(jpeg, out.w, out.h);
+	if (!shutdown) __rgbjWallpaperLastImageMs = Date.now();
 }
 
 function grabColors(shutdown = false) {
+	if (!shutdown && !__rgbjWallpaperGridPrimed) {
+		__rgbjWallpaperLastSettingsKey = "";
+		updateSettings();
+		__rgbjWallpaperGridPrimed = true;
+	}
+	if (rgbjWallpaperUsesFullCanvas()) {
+		grabFullCanvas(shutdown);
+		return;
+	}
+	const positions = vLedPositions[MatrixSize] && vLedPositions[MatrixSize][MatrixTier];
+	if (!Array.isArray(positions) || positions.length === 0) {
+		return;
+	}
 	const RGBData = [];
-	const LedCount = (vLedSizes[MatrixSize][MatrixTier][0] * vLedSizes[MatrixSize][MatrixTier][1]); //1296
-	const NumPackets = Math.ceil(LedCount / MaxLedsInPacket); //2
+	const LedCount = positions.length;
+	const NumPackets = Math.ceil(LedCount / MaxLedsInPacket);
 
-	for (let iIdx = 0; iIdx < vLedPositions[MatrixSize][MatrixTier].length; iIdx++) {
-		const iPxX = vLedPositions[MatrixSize][MatrixTier][iIdx][0];
-		const iPxY = vLedPositions[MatrixSize][MatrixTier][iIdx][1];
+	for (let iIdx = 0; iIdx < LedCount; iIdx++) {
+		const iPxX = positions[iIdx][0];
+		const iPxY = positions[iIdx][1];
 		let color;
 
 		if (shutdown) {
