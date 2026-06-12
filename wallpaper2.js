@@ -349,7 +349,7 @@ class Wallpaper {
 			this.initialized = true;
 
 			service.updateController(this);
-			service.announceController(this);
+			// service.announceController(this);
 		}
 	}
 }
