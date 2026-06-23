@@ -206,7 +206,9 @@ function updateSettings() {
 	packet.push(coverImageBytes.length); // Length prefix
 	packet.push(...coverImageBytes);
 
-	udp.send(controller.ip, controller.port, packet);
+	if (typeof controller !== 'undefined' && controller) {
+		udp.send(controller.ip, controller.port, packet);
+	}
 }
 
 function grabColors(shutdown = false) {
@@ -293,41 +295,87 @@ function generateLedNames(count) {
 
 export function DiscoveryService() {
 	this.IconUrl = "https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/srgbwallpaper.png";
-	this.Initialize = () => {
-		// service.addController(new Wallpaper({
-		// 	id: "Wallpaper3",
-		// 	port: 8132,
-		// 	ip: "127.0.0.1",
-		// 	name: "Wallpaper Engine 2 (debug)",
-		// }));
-		service.addController(new Wallpaper({
-			id: "Wallpaper",
-			port: 8133,
-			ip: "127.0.0.1",
-			name: "Wallpaper Engine 2",
-		}));
-		// service.addController(new Wallpaper({
-		// 	id: "Wallpaper2",
-		// 	port: 8134,
-		// 	ip: "127.0.0.1",
-		// 	name: "Wallpaper Engine 2 (2nd Screen)",
-		// }));
 
-		// const controller = service.getController("Wallpaper");
-		// service.updateController(controller);
-		// service.announceController(controller);
+	this.loadManualDevices = function() {
+		const devicesString = service.getSetting("WallpaperEngine2", "devices");
+		if (devicesString) {
+			try {
+				return JSON.parse(devicesString);
+			} catch (e) {
+				return [];
+			}
+		}
+		return [];
+	};
 
-		const controllers = [service.getController("Wallpaper"), service.getController("Wallpaper2")];
-		controllers.forEach(function (controller, index) {
+	this.saveManualDevices = function(devices) {
+		service.saveSetting("WallpaperEngine2", "devices", JSON.stringify(devices));
+	};
+
+	this.addManualDevice = function(name, ip, port) {
+		if (!ip || !port) return;
+		const id = "Wallpaper_" + Date.now();
+		const newDevice = new Wallpaper({
+			id: id,
+			port: parseInt(port),
+			ip: ip,
+			name: name || "Wallpaper Device"
+		});
+		service.addController(newDevice);
+
+		const devices = this.loadManualDevices();
+		devices.push({
+			id: id,
+			port: parseInt(port),
+			ip: ip,
+			name: name || "Wallpaper Device"
+		});
+		this.saveManualDevices(devices);
+
+		const controller = service.getController(id);
+		if (controller) {
 			service.updateController(controller);
 			service.announceController(controller);
+		}
+	};
+
+	this.removeManualDevice = function(id) {
+		const controller = service.getController(id);
+		if (controller) {
+			service.removeController(controller);
+		}
+
+		const devices = this.loadManualDevices().filter(function(d) { return d.id !== id; });
+		this.saveManualDevices(devices);
+	};
+
+	this.Initialize = () => {
+		let devices = this.loadManualDevices();
+		if (devices.length === 0) {
+			devices = [{
+				id: "Wallpaper",
+				port: 8133,
+				ip: "127.0.0.1",
+				name: "Wallpaper Engine 2",
+			}];
+			this.saveManualDevices(devices);
+		}
+
+		devices.forEach(function (dev) {
+			service.addController(new Wallpaper(dev));
 		});
 
-		updateSettings();
+		for (const cont of service.controllers) {
+			service.updateController(cont);
+			service.announceController(cont);
+		}
+
+		if (typeof controller !== 'undefined' && controller) {
+			updateSettings();
+		}
 	};
 
 	this.Update = () => {
-
 		for (const cont of service.controllers) {
 			cont.obj.update();
 		}
