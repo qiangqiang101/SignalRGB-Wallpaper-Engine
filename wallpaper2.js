@@ -298,14 +298,14 @@ export function DiscoveryService() {
 
 	this.loadManualDevices = function() {
 		const devicesString = service.getSetting("WallpaperEngine2", "devices");
-		if (devicesString) {
-			try {
-				return JSON.parse(devicesString);
-			} catch (e) {
-				return [];
-			}
+		if (devicesString === undefined || devicesString === null || devicesString === "") {
+			return null;
 		}
-		return [];
+		try {
+			return JSON.parse(devicesString);
+		} catch (e) {
+			return [];
+		}
 	};
 
 	this.saveManualDevices = function(devices) {
@@ -315,7 +315,7 @@ export function DiscoveryService() {
 	this.addManualDevice = function(name, ip, port) {
 		if (!ip || !port) return;
 		const id = "Wallpaper_" + Date.now();
-		const newDevice = new Wallpaper({
+		const newDevice = new WallpaperEngineController({
 			id: id,
 			port: parseInt(port),
 			ip: ip,
@@ -323,7 +323,7 @@ export function DiscoveryService() {
 		});
 		service.addController(newDevice);
 
-		const devices = this.loadManualDevices();
+		const devices = this.loadManualDevices() || [];
 		devices.push({
 			id: id,
 			port: parseInt(port),
@@ -331,12 +331,6 @@ export function DiscoveryService() {
 			name: name || "Wallpaper Device"
 		});
 		this.saveManualDevices(devices);
-
-		const controller = service.getController(id);
-		if (controller) {
-			service.updateController(controller);
-			service.announceController(controller);
-		}
 	};
 
 	this.removeManualDevice = function(id) {
@@ -345,13 +339,15 @@ export function DiscoveryService() {
 			service.removeController(controller);
 		}
 
-		const devices = this.loadManualDevices().filter(function(d) { return d.id !== id; });
+		const devices = (this.loadManualDevices() || []).filter(function(d) { return d.id !== id; });
 		this.saveManualDevices(devices);
 	};
 
-	this.Initialize = () => {
+	this.initializedDevices = false;
+
+	this.initializeManualDevices = () => {
 		let devices = this.loadManualDevices();
-		if (devices.length === 0) {
+		if (devices === null) {
 			devices = [{
 				id: "Wallpaper",
 				port: 8133,
@@ -361,28 +357,42 @@ export function DiscoveryService() {
 			this.saveManualDevices(devices);
 		}
 
-		devices.forEach(function (dev) {
-			service.addController(new Wallpaper(dev));
+		devices.forEach((dev) => {
+			try {
+				service.log("Initializing device ID: " + dev.id);
+				const ctrlInstance = new WallpaperEngineController(dev);
+				service.log("Created WallpaperEngineController instance with id: " + ctrlInstance.id);
+				service.addController(ctrlInstance);
+				service.log("Finished addController for ID: " + dev.id);
+			} catch (e) {
+				service.log("Error during device initialization: " + e.message);
+			}
 		});
-
-		for (const cont of service.controllers) {
-			service.updateController(cont);
-			service.announceController(cont);
-		}
 
 		if (typeof controller !== 'undefined' && controller) {
 			updateSettings();
 		}
 	};
 
+	this.Initialize = () => {
+		service.log("Initializing Wallpaper Engine 2 Plugin...");
+	};
+
 	this.Update = () => {
+		if (!this.initializedDevices) {
+			this.initializedDevices = true;
+			this.initializeManualDevices();
+		}
+
 		for (const cont of service.controllers) {
-			cont.obj.update();
+			if (cont.obj && typeof cont.obj.update === 'function') {
+				cont.obj.update();
+			}
 		}
 	};
 }
 
-class Wallpaper {
+class WallpaperEngineController {
 	constructor(value) {
 		this.id = value.id;
 		this.port = value.port;
@@ -390,15 +400,15 @@ class Wallpaper {
 		this.name = value.name;
 
 		this.initialized = false;
-	}
 
-	update() {
-		if (!this.initialized) {
-			this.initialized = true;
+		this.update = () => {
+			if (!this.initialized) {
+				this.initialized = true;
 
-			service.updateController(this);
-			// service.announceController(this);
-		}
+				service.updateController(this);
+				service.announceController(this);
+			}
+		};
 	}
 }
 

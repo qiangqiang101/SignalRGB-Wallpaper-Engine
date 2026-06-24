@@ -87,7 +87,7 @@ Flickable {
 
             Rectangle {
                 width: parent.width
-                height: 180
+                height: 160
                 color: Qt.lighter(theme.background2, 1.1)
                 radius: 8
                 border.color: Qt.lighter(theme.background2, 1.3)
@@ -98,77 +98,37 @@ Flickable {
                     anchors.margins: 15
                     spacing: 15
 
-                    Row {
+                    // Device Name (Full Width)
+                    Column {
                         width: parent.width
-                        spacing: 10
-
-                        // Device Name
-                        Column {
-                            width: (parent.width - 10) * 0.5
-                            spacing: 4
-                            Text {
-                                text: "Device Name"
-                                color: theme.secondarytextcolor
-                                font.pixelSize: 11
-                                font.family: "Poppins"
-                            }
-                            Rectangle {
-                                width: parent.width
-                                height: 36
-                                color: Qt.darker(theme.background2, 1.1)
-                                radius: 6
-                                border.color: nameInput.activeFocus ? "#009bde" : Qt.lighter(theme.background2, 1.3)
-                                border.width: nameInput.activeFocus ? 1.5 : 1
-                                
-                                Behavior on border.color { ColorAnimation { duration: 150 } }
-
-                                TextField {
-                                    id: nameInput
-                                    anchors.fill: parent
-                                    leftPadding: 10
-                                    rightPadding: 10
-                                    color: theme.primarytextcolor
-                                    font.pixelSize: 12
-                                    font.family: "Poppins"
-                                    placeholderText: "Wallpaper Device"
-                                    selectByMouse: true
-                                    background: Item {}
-                                }
-                            }
+                        spacing: 4
+                        Text {
+                            text: "Device Name"
+                            color: theme.secondarytextcolor
+                            font.pixelSize: 11
+                            font.family: "Poppins"
                         }
+                        Rectangle {
+                            width: parent.width
+                            height: 36
+                            color: Qt.darker(theme.background2, 1.1)
+                            radius: 6
+                            border.color: nameInput.activeFocus ? "#009bde" : Qt.lighter(theme.background2, 1.3)
+                            border.width: nameInput.activeFocus ? 1.5 : 1
+                            
+                            Behavior on border.color { ColorAnimation { duration: 150 } }
 
-                        // IP Address
-                        Column {
-                            width: (parent.width - 10) * 0.5
-                            spacing: 4
-                            Text {
-                                text: "IP Address"
-                                color: theme.secondarytextcolor
-                                font.pixelSize: 11
+                            TextField {
+                                id: nameInput
+                                anchors.fill: parent
+                                leftPadding: 10
+                                rightPadding: 10
+                                color: theme.primarytextcolor
+                                font.pixelSize: 12
                                 font.family: "Poppins"
-                            }
-                            Rectangle {
-                                width: parent.width
-                                height: 36
-                                color: Qt.darker(theme.background2, 1.1)
-                                radius: 6
-                                border.color: ipInput.activeFocus ? "#009bde" : Qt.lighter(theme.background2, 1.3)
-                                border.width: ipInput.activeFocus ? 1.5 : 1
-
-                                Behavior on border.color { ColorAnimation { duration: 150 } }
-
-                                TextField {
-                                    id: ipInput
-                                    anchors.fill: parent
-                                    leftPadding: 10
-                                    rightPadding: 10
-                                    color: theme.primarytextcolor
-                                    font.pixelSize: 12
-                                    font.family: "Poppins"
-                                    placeholderText: "127.0.0.1"
-                                    selectByMouse: true
-                                    background: Item {}
-                                }
+                                placeholderText: "Wallpaper Device"
+                                selectByMouse: true
+                                background: Item {}
                             }
                         }
                     }
@@ -205,8 +165,8 @@ Flickable {
                                     color: theme.primarytextcolor
                                     font.pixelSize: 12
                                     font.family: "Poppins"
-                                    placeholderText: "8133"
-                                    text: "8133"
+                                    placeholderText: "8133-8136"
+                                    text: ""
                                     selectByMouse: true
                                     background: Item {}
                                 }
@@ -242,16 +202,13 @@ Flickable {
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        if (ipInput.text.trim() !== "") {
-                                            service.addManualDevice(
-                                                nameInput.text.trim() || "Wallpaper Device",
-                                                ipInput.text.trim(),
-                                                portInput.text.trim() || "8133"
-                                            );
-                                            nameInput.text = "";
-                                            ipInput.text = "";
-                                            portInput.text = "8133";
-                                        }
+                                        discovery.addManualDevice(
+                                            nameInput.text.trim() || "Wallpaper Device",
+                                            "127.0.0.1",
+                                            portInput.text.trim() || "8133"
+                                        );
+                                        nameInput.text = "";
+                                        portInput.text = "8133";
                                     }
                                 }
                             }
@@ -370,7 +327,7 @@ Flickable {
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        service.removeManualDevice(device.id);
+                                        discovery.removeManualDevice(device.id);
                                     }
                                 }
                             }
