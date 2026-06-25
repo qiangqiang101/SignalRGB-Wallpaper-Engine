@@ -1,4 +1,4 @@
-# SignalRGB Wallpaper Engine
+# SignalRGB Wallpaper Engine 2
 ![Github All Releases](https://img.shields.io/github/downloads/qiangqiang101/SignalRGB-Wallpaper-Engine/total.svg)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/qiangqiang101/SignalRGB-Wallpaper-Engine)
 ![GitHub](https://img.shields.io/github/license/qiangqiang101/SignalRGB-Wallpaper-Engine)
@@ -11,7 +11,7 @@
 [![Follow on Patreon](https://img.shields.io/badge/Donate-Patreon-orange)](https://www.patreon.com/imnotmental)
 
 The first SignalRGB Wallpaper Engine Wallpaper coded with Visual Basic & Javascript.
-![image](https://github.com/user-attachments/assets/77027bf4-4fda-4d27-86c2-138ebffbe07a)
+<img width="1920" height="1029" alt="image" src="https://github.com/user-attachments/assets/745d50f9-de6d-439f-8237-cb1a6435daad" />
 
 https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 
@@ -20,8 +20,7 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 [![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgitlab.png?raw=true)](https://srgbmods.net/s?p=addon/install?url=https://gitlab.com/nollie/SignalRGB-Wallpaper-Engine)
 
 ### Wallpaper Engine
-[![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3475033880) (Main Screen)
-[![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3581131369) (Second Screen)
+[![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3751680892) 
 
 ### Lively Wallpaper
 [Download](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/releases)
