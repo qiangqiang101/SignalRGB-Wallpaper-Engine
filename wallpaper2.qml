@@ -62,7 +62,7 @@ Flickable {
                     width: parent.width - 54
                     color: theme.primarytextcolor
                     textFormat: Text.RichText
-                    text: "<strong>Important:</strong> this service requires <strong><style>a:link { color: \"#009bde\"; }</style><a href=\"https://steamcommunity.com/sharedfiles/filedetails/?id=3475033880\">SignalRGB Wallpaper Engine</a></strong> to work correctly."
+                    text: "<strong>Important:</strong> this service requires <strong><style>a:link { color: \"#009bde\"; }</style><a href=\"https://steamcommunity.com/workshop/filedetails/?id=3751680892\">SignalRGB Wallpaper Engine</a></strong> to work correctly."
                     onLinkActivated: Qt.openUrlExternally(link)
                     font.pixelSize: 12
                     font.family: "Poppins"
@@ -258,7 +258,7 @@ Flickable {
                                 width: 44
                                 height: 44
                                 radius: 22
-                                color: "#009bde"
+                                color: "#0F1620"
                                 anchors.verticalCenter: parent.verticalCenter
                                 opacity: removeMouseArea.containsMouse ? 0.8 : 1
                                 Behavior on opacity { NumberAnimation { duration: 150 } }
