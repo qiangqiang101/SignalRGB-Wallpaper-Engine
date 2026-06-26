@@ -23,15 +23,18 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3751680892) 
 
 ### Lively Wallpaper
-<a href="../../releases">Download</a>
+- <a href="https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/releases">Download (Github)</a>
+- <a href="https://gitlab.com/nollie/SignalRGB-Wallpaper-Engine/-/releases">Download (GitLab)</a>
 
 ## 🔧 Troubleshooting
-- <a href="../../wiki/Troubleshooting">Troubleshooting Wiki</a>
-- <a href="../../discussions/categories/tech-support">Ask the community</a>
+- <a href="https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Wallpapers">Troubleshooting Wiki (Github)</a>
+- <a href="https://gitlab.com/nollie/SignalRGB-Wallpaper-Engine/-/wikis/Troubleshooting">Troubleshooting Wiki (GitLab)</a>
+- <a href="https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/discussions/categories/tech-support">Ask the community</a>
 
 ## 🖼️ Wallpaper Covers
-- <a href="../../wiki/Wallpapers">Official Wallpaper Covers</a>
-- <a href="../../discussions/categories/community-wallpapers">Community Wallpaper Covers</a>
+- <a href="https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Wallpapers">Official Wallpaper Covers (Github)</a>
+- <a href="https://gitlab.com/nollie/SignalRGB-Wallpaper-Engine/-/wikis/Wallpapers">Official Wallpaper Covers (GitLab)</a>
+- <a href="https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/discussions/categories/community-wallpapers">Community Wallpaper Covers</a>
 
 ## 🚧 Prerequisite
 - [.NET 10.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
