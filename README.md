@@ -36,7 +36,7 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 ## 🚧 Prerequisite
 - [.NET 10.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 - [Wallpaper Engine](https://store.steampowered.com/app/431960/Wallpaper_Engine/) or [Lively Wallpaper](https://github.com/rocksdanister/lively/releases/latest)
-- [SignalRGB](https://signalrgb.com/)
+- [SignalRGB](https://signalrgb.com/) or [RGBJunkie](https://rgbjunkie.com/RGBJunkieApp/)
 - Wallpaper Engine requires Windows 10/11 version 24H2 and above, Lively Wallpaper requires Windows 10/11 version 23H2 and below
 
 ## 🚀 Similar Projects
