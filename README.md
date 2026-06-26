@@ -23,15 +23,15 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 [![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3751680892) 
 
 ### Lively Wallpaper
-[Download](../../releases)
+<a href="../../releases">Download</a>
 
 ## 🔧 Troubleshooting
-- [Troubleshooting Wiki](../../wiki/Troubleshooting)
-- [Ask the community](../../discussions/categories/tech-support)
+- <a href="../../wiki/Troubleshooting">Troubleshooting Wiki</a>
+- <a href="../../discussions/categories/tech-support">Ask the community</a>
 
 ## 🖼️ Wallpaper Covers
-- [Official Wallpaper Covers](../../wiki/Wallpapers)
-- [Community Wallpaper Covers](../../discussions/categories/community-wallpapers)
+- <a href="../../wiki/Wallpapers">Official Wallpaper Covers</a>
+- <a href="../../discussions/categories/community-wallpapers">Community Wallpaper Covers</a>
 
 ## 🚧 Prerequisite
 - [.NET 10.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
