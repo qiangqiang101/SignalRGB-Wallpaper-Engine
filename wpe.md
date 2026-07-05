@@ -18,5 +18,5 @@ Since this wallpaper cannot be downloaded via the Steam Workshop, you will need 
 2. Right-click the app and select Properties.
 3. Go to the Installed Files tab and click Browse... (or "Browse Local Files" in older versions).
 4. From the folder that opens, simply double-click the __projects__ folder.
-5. Extract the contents of **signalrgb.zip** into __projects__ folder.
+5. Extract the contents of **SignalRGB.WPE.Wallpaper.zip** into __projects__ folder.
 6. The wallpaper will now appear in your local library under your **Installed** tab. Select it to apply it to your desktop!
