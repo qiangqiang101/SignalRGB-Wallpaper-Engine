@@ -19,12 +19,7 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 [![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgithub.png?raw=true)](https://srgbmods.net/s?p=addon/install?url=https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine)
 [![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgitlab.png?raw=true)](https://srgbmods.net/s?p=addon/install?url=https://gitlab.com/nollie/SignalRGB-Wallpaper-Engine)
 
-### Wallpaper Engine
-[![Click here to add this repo to SignalRGB](https://raw.githubusercontent.com/qiangqiang101/SignalRGB-Wallpaper-Engine/refs/heads/main/subsbutton.png)](https://steamcommunity.com/sharedfiles/filedetails/?id=3751680892) 
-
-### Lively Wallpaper
-- <a href="https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/releases">Download (Github)</a>
-- <a href="https://gitlab.com/nollie/SignalRGB-Wallpaper-Engine/-/releases">Download (GitLab)</a>
+[Wallpaper Engine](wpe.md) | [Lively Wallpaper](lively.md)
 
 ## 🔧 Troubleshooting
 - <a href="https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/wiki/Wallpapers">Troubleshooting Wiki (Github)</a>
