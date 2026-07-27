@@ -1,2 +1,0 @@
-SignalRGBWallpaperEngine.dll.config
-\publish\
