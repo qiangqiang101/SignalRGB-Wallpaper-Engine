@@ -19,8 +19,8 @@ https://github.com/user-attachments/assets/5fba7161-b260-4840-be5c-b965bf197007
 
 ## 🛠️ Install
 ### Plugin
-[![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgithub.png?raw=true)](https://srgbmods.net/s?p=addon/install?url=https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine) | 
-[![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgitlab.png?raw=true)](https://srgbmods.net/s?p=addon/install?url=https://gitlab.com/nollie/SignalRGB-Wallpaper-Engine)
+[![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgithub.png?raw=true)](https://go.signalrgb.com/app/addon/install?url=https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine) | 
+[![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgitlab.png?raw=true)](https://go.signalrgb.com/app/addon/install?url=https://gitlab.com/nollie/SignalRGB-Wallpaper-Engine)
 
 ### Wallpaper Client
 [GitHub](https://github.com/qiangqiang101/RGB-Wallpaper/releases) | [GitLab](https://gitlab.com/nollie/RGB-Wallpaper/-/releases)
